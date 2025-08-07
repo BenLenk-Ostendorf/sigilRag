@@ -73,12 +73,14 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Initialize session state
-# Force reset if using old auth class
+# Force reset if using old auth class or incompatible session state
 if ("auth" in st.session_state and 
-    st.session_state.auth.__class__.__name__ == "PseudonymAuth"):
+    (st.session_state.auth.__class__.__name__ == "PseudonymAuth" or
+     not hasattr(st.session_state.auth, 'is_admin'))):
     # Clear old session state to force reinitialization
     for key in list(st.session_state.keys()):
         del st.session_state[key]
+    st.rerun()
 
 if "initialized" not in st.session_state:
     st.session_state.initialized = False
@@ -164,17 +166,25 @@ def main():
                 st.rerun()
     
     # Main content based on selected page
-    if not auth.is_authenticated():
+    if not hasattr(auth, 'is_authenticated') or not auth.is_authenticated():
         auth.render_login_form()
     else:
         # Log session start if new session
         if "session_logged" not in st.session_state:
-            logger.log_session_start(
-                auth.get_user_id(), 
-                auth.get_code(), 
-                auth.get_group(),
-                auth.is_admin()
-            )
+            try:
+                # Try new method signature with group and admin info
+                logger.log_session_start(
+                    auth.get_user_id(), 
+                    auth.get_code(), 
+                    auth.get_group(),
+                    auth.is_admin()
+                )
+            except TypeError:
+                # Fallback to old method signature if needed
+                logger.log_session_start(
+                    auth.get_user_id(), 
+                    auth.get_code() or "unknown"
+                )
             st.session_state.session_logged = True
         
         if page == "💬 Chat":
