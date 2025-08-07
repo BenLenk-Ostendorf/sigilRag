@@ -4,13 +4,19 @@ Displays usage statistics, user interactions, and system metrics.
 """
 
 import streamlit as st
-import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 from typing import Dict, Any
 from .logger import SiegelLogger
 from .utils import format_timestamp
+
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+    pd = None
 
 
 class SiegelDashboard:
@@ -23,33 +29,82 @@ class SiegelDashboard:
         """Render the complete dashboard."""
         st.title("📊 Siegel RAG Dashboard")
         
+        if not PANDAS_AVAILABLE:
+            st.warning("⚠️ Advanced analytics not available (pandas not installed). Showing basic statistics only.")
+        
         # Get data
         stats = self.logger.get_stats()
-        interactions_df = self.logger.get_interactions_df()
-        sessions_df = self.logger.get_sessions_df()
-        errors_df = self.logger.get_errors_df()
+        interactions_data = self.logger.get_interactions_df()
+        sessions_data = self.logger.get_sessions_df()
+        errors_data = self.logger.get_errors_df()
         
         # Overview metrics
         self._render_overview_metrics(stats)
         
         # Charts and visualizations
-        if not interactions_df.empty:
-            self._render_usage_charts(interactions_df)
-            self._render_user_activity(interactions_df)
-            self._render_interaction_details(interactions_df)
+        if PANDAS_AVAILABLE and not interactions_data.empty:
+            self._render_usage_charts(interactions_data)
+            self._render_user_activity(interactions_data)
+            self._render_interaction_details(interactions_data)
+        elif not PANDAS_AVAILABLE and interactions_data:
+            self._render_basic_stats(interactions_data)
         
         # Session information
-        if not sessions_df.empty:
-            self._render_session_info(sessions_df)
+        if PANDAS_AVAILABLE and not sessions_data.empty:
+            self._render_session_info(sessions_data)
+        elif not PANDAS_AVAILABLE and sessions_data:
+            st.subheader("🔄 Session-Informationen")
+            st.info(f"Total sessions recorded: {len(sessions_data)}")
         
         # Error tracking
-        if not errors_df.empty:
-            self._render_error_tracking(errors_df)
+        if PANDAS_AVAILABLE and not errors_data.empty:
+            self._render_error_tracking(errors_data)
+        elif not PANDAS_AVAILABLE and errors_data:
+            st.subheader("⚠️ Fehler-Tracking")
+            st.error(f"Total errors recorded: {len(errors_data)}")
         else:
             st.success("🎉 No errors recorded!")
         
         # Export functionality
         self._render_export_section()
+    
+    def _render_basic_stats(self, interactions_data: list):
+        """Render basic statistics when pandas is not available."""
+        st.subheader("📊 Basis-Statistiken")
+        
+        if not interactions_data:
+            st.info("Keine Interaktionen verfügbar.")
+            return
+        
+        # Count interactions by user
+        user_counts = {}
+        total_questions = len(interactions_data)
+        
+        for interaction in interactions_data:
+            user = interaction.get('pseudonym', 'Unknown')
+            user_counts[user] = user_counts.get(user, 0) + 1
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.metric("Total Interactions", total_questions)
+            st.metric("Unique Users", len(user_counts))
+        
+        with col2:
+            if user_counts:
+                most_active = max(user_counts, key=user_counts.get)
+                st.metric("Most Active User", most_active)
+                st.metric("Their Questions", user_counts[most_active])
+        
+        # Show recent interactions
+        st.subheader("🕒 Recent Interactions")
+        recent = interactions_data[-5:] if len(interactions_data) > 5 else interactions_data
+        
+        for i, interaction in enumerate(reversed(recent)):
+            with st.expander(f"Question {len(interactions_data) - i}"):
+                st.write(f"**User:** {interaction.get('pseudonym', 'Unknown')}")
+                st.write(f"**Time:** {interaction.get('timestamp', 'Unknown')}")
+                st.write(f"**Question:** {interaction.get('question', 'No question')[:100]}...")
     
     def _render_overview_metrics(self, stats: Dict[str, Any]):
         """Render overview metrics cards."""

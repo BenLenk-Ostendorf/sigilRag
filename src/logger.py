@@ -5,10 +5,16 @@ Logs all user interactions in structured JSON format.
 
 import json
 import os
-import pandas as pd
 from datetime import datetime
 from typing import Dict, List, Optional, Any
 from pathlib import Path
+
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+    pd = None
 
 
 class SiegelLogger:
@@ -102,20 +108,32 @@ class SiegelLogger:
         except Exception as e:
             print(f"Error writing to log file {log_file}: {e}")
     
-    def get_interactions_df(self) -> pd.DataFrame:
-        """Load interactions as a pandas DataFrame."""
-        return self._load_jsonl_as_df(self.interactions_log)
+    def get_interactions_df(self):
+        """Load interactions as a pandas DataFrame or list of dicts."""
+        if PANDAS_AVAILABLE:
+            return self._load_jsonl_as_df(self.interactions_log)
+        else:
+            return self._load_jsonl_as_list(self.interactions_log)
     
-    def get_sessions_df(self) -> pd.DataFrame:
-        """Load sessions as a pandas DataFrame."""
-        return self._load_jsonl_as_df(self.sessions_log)
+    def get_sessions_df(self):
+        """Load sessions as a pandas DataFrame or list of dicts."""
+        if PANDAS_AVAILABLE:
+            return self._load_jsonl_as_df(self.sessions_log)
+        else:
+            return self._load_jsonl_as_list(self.sessions_log)
     
-    def get_errors_df(self) -> pd.DataFrame:
-        """Load errors as a pandas DataFrame."""
-        return self._load_jsonl_as_df(self.errors_log)
+    def get_errors_df(self):
+        """Load errors as a pandas DataFrame or list of dicts."""
+        if PANDAS_AVAILABLE:
+            return self._load_jsonl_as_df(self.errors_log)
+        else:
+            return self._load_jsonl_as_list(self.errors_log)
     
-    def _load_jsonl_as_df(self, log_file: Path) -> pd.DataFrame:
+    def _load_jsonl_as_df(self, log_file: Path):
         """Load a JSONL file as a pandas DataFrame."""
+        if not PANDAS_AVAILABLE:
+            return self._load_jsonl_as_list(log_file)
+            
         if not log_file.exists():
             return pd.DataFrame()
         
@@ -136,6 +154,22 @@ class SiegelLogger:
         except Exception as e:
             print(f"Error loading log file {log_file}: {e}")
             return pd.DataFrame()
+    
+    def _load_jsonl_as_list(self, log_file: Path) -> List[Dict]:
+        """Load a JSONL file as a list of dictionaries (fallback when pandas not available)."""
+        if not log_file.exists():
+            return []
+        
+        try:
+            data = []
+            with open(log_file, "r", encoding="utf-8") as f:
+                for line in f:
+                    if line.strip():
+                        data.append(json.loads(line))
+            return data
+        except Exception as e:
+            print(f"Error loading log file {log_file}: {e}")
+            return []
     
     def export_to_csv(self, output_dir: str = "exports") -> Dict[str, str]:
         """Export all logs to CSV files."""

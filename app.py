@@ -6,10 +6,12 @@ Provides a chat interface for answering questions about seal creation.
 import streamlit as st
 import os
 from datetime import datetime
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # dotenv not available, use environment variables directly
+    pass
 
 # Import custom modules
 from src.auth import PseudonymAuth
