@@ -73,6 +73,13 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Initialize session state
+# Force reset if using old auth class
+if ("auth" in st.session_state and 
+    st.session_state.auth.__class__.__name__ == "PseudonymAuth"):
+    # Clear old session state to force reinitialization
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+
 if "initialized" not in st.session_state:
     st.session_state.initialized = False
     st.session_state.messages = []
