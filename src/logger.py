@@ -55,7 +55,7 @@ class SiegelLogger:
         
         self._write_log_entry(self.interactions_log, interaction_data)
     
-    def log_session_start(self, user_id: str, pseudonym: str, timestamp: Optional[datetime] = None):
+    def log_session_start(self, user_id: str, code: str, group: int, is_admin: bool, timestamp: Optional[datetime] = None):
         """Log session start."""
         if timestamp is None:
             timestamp = datetime.now()
@@ -63,7 +63,9 @@ class SiegelLogger:
         session_data = {
             "timestamp": timestamp.isoformat(),
             "user_id": user_id,
-            "pseudonym": pseudonym,
+            "code": code,
+            "group": group,
+            "is_admin": is_admin,
             "event": "session_start"
         }
         

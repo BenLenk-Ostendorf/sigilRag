@@ -14,7 +14,7 @@ except ImportError:
     pass
 
 # Import custom modules
-from src.auth import PseudonymAuth
+from src.auth import CodeAuth
 from src.rag_system import SiegelRAGSystem
 from src.logger import SiegelLogger
 from src.dashboard import SiegelDashboard
@@ -78,7 +78,7 @@ if "initialized" not in st.session_state:
     st.session_state.messages = []
     st.session_state.rag_system = None
     st.session_state.logger = None
-    st.session_state.auth = PseudonymAuth()
+    st.session_state.auth = CodeAuth()
 
 # Initialize components
 @st.cache_resource
@@ -116,12 +116,17 @@ def main():
             auth.render_user_info()
             st.divider()
         
-        # Navigation
-        page = st.selectbox(
-            "Seite auswählen:",
-            ["💬 Chat", "📊 Dashboard", "🔧 System", "📋 Fragebogen"],
-            index=0
-        )
+        # Navigation - Admin only for non-chat pages
+        if auth.is_admin():
+            page = st.selectbox(
+                "Seite auswählen:",
+                ["💬 Chat", "📊 Dashboard", "🔧 System", "📋 Fragebogen"],
+                index=0
+            )
+        else:
+            # Regular users only see chat
+            page = "💬 Chat"
+            st.info("💬 Chat-Modus")
         
         # System status
         if rag_system:
@@ -143,11 +148,13 @@ def main():
                 rag_system.clear_memory()
             st.rerun()
         
-        if st.button("🔧 Vector Store neu erstellen") and rag_system:
-            with st.spinner("Erstelle Vector Store neu..."):
-                rag_system.rebuild_vector_store()
-            st.success("Vector Store neu erstellt!")
-            st.rerun()
+        # Vector store rebuild - Admin only
+        if auth.is_admin():
+            if st.button("🔧 Vector Store neu erstellen") and rag_system:
+                with st.spinner("Erstelle Vector Store neu..."):
+                    rag_system.rebuild_vector_store()
+                st.success("Vector Store neu erstellt!")
+                st.rerun()
     
     # Main content based on selected page
     if not auth.is_authenticated():
@@ -155,7 +162,12 @@ def main():
     else:
         # Log session start if new session
         if "session_logged" not in st.session_state:
-            logger.log_session_start(auth.get_user_id(), auth.get_pseudonym())
+            logger.log_session_start(
+                auth.get_user_id(), 
+                auth.get_code(), 
+                auth.get_group(),
+                auth.is_admin()
+            )
             st.session_state.session_logged = True
         
         if page == "💬 Chat":
