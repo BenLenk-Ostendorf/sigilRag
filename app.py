@@ -187,12 +187,34 @@ def main():
                 )
             st.session_state.session_logged = True
         
-        if page == "💬 Chat":
-            render_chat_page(rag_system, logger, auth)
-        elif page == "📊 Dashboard":
-            render_dashboard_page(logger)
-        elif page == "🔧 System":
-            render_system_page(rag_system)
+        # Group-based access control
+        user_group = auth.get_group()
+        
+        if user_group == 1:
+            # Group 1: No access - show contact message
+            render_group1_blocked_page()
+        elif user_group == 2:
+            # Group 2: RAG GPT access
+            if page == "💬 Chat":
+                render_chat_page(rag_system, logger, auth)
+            elif page == "📊 Dashboard":
+                render_dashboard_page(logger)
+            elif page == "🔧 System":
+                render_system_page(rag_system)
+        elif user_group == 3:
+            # Group 3: explAIner placeholder
+            render_explainer_page()
+        elif auth.is_admin():
+            # Admin access to all pages
+            if page == "💬 Chat":
+                render_chat_page(rag_system, logger, auth)
+            elif page == "📊 Dashboard":
+                render_dashboard_page(logger)
+            elif page == "🔧 System":
+                render_system_page(rag_system)
+        else:
+            # Unknown group or no group
+            st.error("❌ Unbekannte Gruppe. Bitte wenden Sie sich an den Administrator.")
 
 def render_chat_page(rag_system, logger, auth):
     """Render the main chat interface."""
@@ -347,6 +369,69 @@ def render_system_page(rag_system):
             with st.expander("Verzeichnisse anzeigen"):
                 for directory in data_files["directories"]:
                     st.text(directory)
+
+def render_group1_blocked_page():
+    """Render blocked access page for Group 1 users."""
+    st.title("🚫 Zugang gesperrt")
+    
+    st.markdown("""
+    ### Liebe/r Teilnehmer/in,
+    
+    Ihr Zugang zu diesem System ist derzeit nicht freigeschaltet.
+    
+    **Bitte wenden Sie sich an:**
+    📧 **ben.lenkostendorf@tum.de**
+    
+    Wir werden Ihnen so schnell wie möglich weiterhelfen.
+    
+    Vielen Dank für Ihr Verständnis!
+    """)
+    
+    # Add some visual separation
+    st.divider()
+    
+    st.info("📞 Bei Fragen können Sie sich jederzeit an die oben genannte E-Mail-Adresse wenden.")
+
+def render_explainer_page():
+    """Render placeholder page for Group 3 explAIner users."""
+    st.title("🎆 Welcome to the explAIner")
+    
+    st.markdown("""
+    ### Willkommen beim explAIner System!
+    
+    🚀 **Das explAIner System ist in Entwicklung...**
+    
+    Hier werden Sie bald Zugang zu unserem innovativen explAIner-Tool haben, 
+    das Ihnen dabei hilft, KI-Entscheidungen besser zu verstehen und zu erklären.
+    
+    ### Was Sie erwarten können:
+    - 🔍 **Interaktive Erklärungen** von KI-Modellen
+    - 📊 **Visualisierungen** komplexer Algorithmen  
+    - 🎯 **Personalisierte Lernpfade** für AI-Verständnis
+    - 💡 **Praktische Beispiele** und Übungen
+    
+    ### Status:
+    🚧 **In Entwicklung** - Bald verfügbar!
+    
+    Vielen Dank für Ihre Geduld. Das explAIner-Team arbeitet hart daran, 
+    Ihnen bald eine außergewöhnliche Lernerfahrung zu bieten.
+    """)
+    
+    # Add some visual elements
+    st.divider()
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric("📈 Fortschritt", "75%")
+    
+    with col2:
+        st.metric("📅 Geschätzte Fertigstellung", "Bald")
+    
+    with col3:
+        st.metric("👥 Beta-Tester", "Gesucht!")
+    
+    st.success("📧 Für Updates und Beta-Zugang: ben.lenkostendorf@tum.de")
 
 if __name__ == "__main__":
     main()
