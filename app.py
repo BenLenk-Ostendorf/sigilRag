@@ -251,10 +251,15 @@ def render_chat_page(rag_system, logger, auth):
         })
         
         # Log interaction
-        session_duration = auth.get_session_duration() or 0
+        # Calculate session duration manually
+        login_time = auth.get_login_time()
+        session_duration = 0
+        if login_time:
+            from datetime import datetime
+            session_duration = (datetime.now() - login_time).total_seconds()
         logger.log_interaction(
             user_id=auth.get_user_id(),
-            pseudonym=auth.get_pseudonym(),
+            pseudonym=auth.get_code(),
             question=prompt,
             answer=answer,
             session_duration=session_duration,
