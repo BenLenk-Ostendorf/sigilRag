@@ -38,6 +38,11 @@ class SiegelDashboard:
         sessions_data = self.logger.get_sessions_df()
         errors_data = self.logger.get_errors_df()
         
+        # Data export section
+        self._render_data_export_section()
+        
+        st.divider()
+        
         # Overview metrics
         self._render_overview_metrics(stats)
         
@@ -345,6 +350,102 @@ class SiegelDashboard:
             },
             use_container_width=True
         )
+    
+    def _render_data_export_section(self):
+        """Render data download functionality."""
+        st.subheader("📥 Conversation Data Download")
+        st.markdown("Download all conversation data in various formats:")
+        
+        col1, col2, col3 = st.columns(3)
+        
+        # Get data for downloads
+        interactions_data = self.logger.get_interactions_df()
+        sessions_data = self.logger.get_sessions_df()
+        errors_data = self.logger.get_errors_df()
+        
+        with col1:
+            # CSV Downloads
+            st.markdown("**📊 CSV Format**")
+            
+            if PANDAS_AVAILABLE and hasattr(interactions_data, 'to_csv'):
+                if not interactions_data.empty:
+                    csv_data = interactions_data.to_csv(index=False)
+                    st.download_button(
+                        label="💬 Download Conversations CSV",
+                        data=csv_data,
+                        file_name=f"conversations_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                        mime="text/csv",
+                        use_container_width=True
+                    )
+                else:
+                    st.info("No conversation data available")
+            else:
+                st.warning("CSV export requires pandas")
+        
+        with col2:
+            # JSON Downloads
+            st.markdown("**📋 JSON Format**")
+            
+            if interactions_data:
+                if PANDAS_AVAILABLE and hasattr(interactions_data, 'to_json'):
+                    json_data = interactions_data.to_json(orient='records', date_format='iso')
+                else:
+                    # Fallback for when pandas is not available
+                    import json
+                    json_data = json.dumps(interactions_data, indent=2, ensure_ascii=False, default=str)
+                
+                st.download_button(
+                    label="💬 Download Conversations JSON",
+                    data=json_data,
+                    file_name=f"conversations_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+                    mime="application/json",
+                    use_container_width=True
+                )
+            else:
+                st.info("No conversation data available")
+        
+        with col3:
+            # Combined Export
+            st.markdown("**📦 Complete Export**")
+            
+            if st.button("📤 Generate Complete Export", use_container_width=True):
+                self._generate_complete_export(interactions_data, sessions_data, errors_data)
+    
+    def _generate_complete_export(self, interactions_data, sessions_data, errors_data):
+        """Generate a complete export with all data types."""
+        try:
+            import json
+            from datetime import datetime
+            
+            # Create comprehensive export data
+            export_data = {
+                "export_timestamp": datetime.now().isoformat(),
+                "export_info": {
+                    "total_conversations": len(interactions_data) if interactions_data else 0,
+                    "total_sessions": len(sessions_data) if sessions_data else 0,
+                    "total_errors": len(errors_data) if errors_data else 0
+                },
+                "conversations": interactions_data if not PANDAS_AVAILABLE else interactions_data.to_dict('records') if not interactions_data.empty else [],
+                "sessions": sessions_data if not PANDAS_AVAILABLE else sessions_data.to_dict('records') if not sessions_data.empty else [],
+                "errors": errors_data if not PANDAS_AVAILABLE else errors_data.to_dict('records') if not errors_data.empty else []
+            }
+            
+            # Convert to JSON
+            json_export = json.dumps(export_data, indent=2, ensure_ascii=False, default=str)
+            
+            # Provide download
+            st.download_button(
+                label="📥 Download Complete Export",
+                data=json_export,
+                file_name=f"sigilrag_complete_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+                mime="application/json",
+                use_container_width=True
+            )
+            
+            st.success("✅ Complete export generated successfully!")
+            
+        except Exception as e:
+            st.error(f"Error generating complete export: {e}")
     
     def _render_export_section(self):
         """Render export functionality."""

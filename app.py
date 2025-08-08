@@ -129,7 +129,7 @@ def main():
         if auth.is_admin():
             page = st.selectbox(
                 "Seite auswählen:",
-                ["💬 Chat", "📊 Dashboard", "🔧 System", "📋 Fragebogen"],
+                ["💬 Chat", "📊 Dashboard", "🔧 System"],
                 index=0
             )
         else:
@@ -193,8 +193,6 @@ def main():
             render_dashboard_page(logger)
         elif page == "🔧 System":
             render_system_page(rag_system)
-        elif page == "📋 Fragebogen":
-            render_questionnaire_page()
 
 def render_chat_page(rag_system, logger, auth):
     """Render the main chat interface."""
@@ -344,57 +342,6 @@ def render_system_page(rag_system):
             with st.expander("Verzeichnisse anzeigen"):
                 for directory in data_files["directories"]:
                     st.text(directory)
-
-def render_questionnaire_page():
-    """Render the questionnaire iframe integration."""
-    st.title("📋 Fragebogen-Tool")
-    st.markdown("Hier können Sie das integrierte Fragebogen-Tool verwenden:")
-    
-    # Placeholder for iframe - replace with actual questionnaire URL
-    questionnaire_url = st.text_input(
-        "Fragebogen-URL:",
-        placeholder="https://example.com/questionnaire",
-        help="Geben Sie die URL des Fragebogen-Tools ein"
-    )
-    
-    iframe_height = st.slider("Iframe-Höhe:", 400, 1000, 600)
-    
-    if questionnaire_url:
-        # Basic URL validation
-        if questionnaire_url.startswith(('http://', 'https://')):
-            st.markdown(f"""
-            <div class="iframe-container">
-                <iframe 
-                    src="{questionnaire_url}" 
-                    width="100%" 
-                    height="{iframe_height}px"
-                    frameborder="0">
-                </iframe>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.error("Bitte geben Sie eine gültige URL ein (beginnend mit http:// oder https://)")
-    else:
-        st.info("Geben Sie eine Fragebogen-URL ein, um das Tool zu laden.")
-        
-        # Example/demo content
-        st.markdown("""
-        ### 📝 Beispiel-Fragebogen
-        
-        Hier würde normalerweise ein interaktives Fragebogen-Tool eingebettet werden.
-        
-        **Mögliche Fragen könnten sein:**
-        - Welche Stadt möchten Sie als Siegel erstellen?
-        - Wie viele Einwohner hat die Stadt?
-        - In welchem Bundesland liegt die Stadt?
-        - Ist die Stadt eine Hauptstadt?
-        - Welche Koordinaten hat die Stadt?
-        
-        **Integration:**
-        - Das Fragebogen-Tool kann über eine iframe eingebunden werden
-        - Ergebnisse können an das RAG-System weitergegeben werden
-        - Automatische Siegel-Erstellung basierend auf den Antworten
-        """)
 
 if __name__ == "__main__":
     main()
