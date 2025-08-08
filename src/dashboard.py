@@ -386,7 +386,14 @@ class SiegelDashboard:
             # JSON Downloads
             st.markdown("**📋 JSON Format**")
             
-            if interactions_data:
+            # Check if data exists (handle both pandas DataFrame and list)
+            has_data = False
+            if PANDAS_AVAILABLE and hasattr(interactions_data, 'empty'):
+                has_data = not interactions_data.empty
+            elif interactions_data:
+                has_data = len(interactions_data) > 0
+            
+            if has_data:
                 if PANDAS_AVAILABLE and hasattr(interactions_data, 'to_json'):
                     json_data = interactions_data.to_json(orient='records', date_format='iso')
                 else:
@@ -417,17 +424,33 @@ class SiegelDashboard:
             import json
             from datetime import datetime
             
+            # Helper function to safely get length
+            def safe_len(data):
+                if PANDAS_AVAILABLE and hasattr(data, 'empty'):
+                    return len(data) if not data.empty else 0
+                elif data:
+                    return len(data)
+                return 0
+            
+            # Helper function to safely convert to dict
+            def safe_to_dict(data):
+                if PANDAS_AVAILABLE and hasattr(data, 'empty'):
+                    return data.to_dict('records') if not data.empty else []
+                elif data:
+                    return data if isinstance(data, list) else []
+                return []
+            
             # Create comprehensive export data
             export_data = {
                 "export_timestamp": datetime.now().isoformat(),
                 "export_info": {
-                    "total_conversations": len(interactions_data) if interactions_data else 0,
-                    "total_sessions": len(sessions_data) if sessions_data else 0,
-                    "total_errors": len(errors_data) if errors_data else 0
+                    "total_conversations": safe_len(interactions_data),
+                    "total_sessions": safe_len(sessions_data),
+                    "total_errors": safe_len(errors_data)
                 },
-                "conversations": interactions_data if not PANDAS_AVAILABLE else interactions_data.to_dict('records') if not interactions_data.empty else [],
-                "sessions": sessions_data if not PANDAS_AVAILABLE else sessions_data.to_dict('records') if not sessions_data.empty else [],
-                "errors": errors_data if not PANDAS_AVAILABLE else errors_data.to_dict('records') if not errors_data.empty else []
+                "conversations": safe_to_dict(interactions_data),
+                "sessions": safe_to_dict(sessions_data),
+                "errors": safe_to_dict(errors_data)
             }
             
             # Convert to JSON
