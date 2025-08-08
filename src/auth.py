@@ -20,8 +20,13 @@ class CodeAuth:
         self.group_key = "user_group"
         self.admin_key = "is_admin"
         
-        # Admin password - change this for production
-        self.admin_password = "admin2024"
+        # Admin password from Streamlit secrets
+        try:
+            self.admin_password = st.secrets["general"]["ADMIN_PASSWORD"]
+        except KeyError:
+            # Fallback for development/testing
+            self.admin_password = "admin2024"
+            st.warning("⚠️ Admin password not found in secrets. Using default password for development.")
     
     def is_authenticated(self) -> bool:
         """Check if user is authenticated (has a valid code)."""
