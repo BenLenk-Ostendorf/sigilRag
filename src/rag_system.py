@@ -43,21 +43,28 @@ class SiegelRAGSystem:
     def initialize(self) -> bool:
         """Initialize the RAG system."""
         try:
-            # Check for OpenAI API key
-            if not os.getenv("OPENAI_API_KEY"):
-                st.error("OpenAI API key not found. Please set OPENAI_API_KEY in your .env file.")
+            # Get OpenAI API key from Streamlit secrets or environment
+            openai_api_key = None
+            try:
+                openai_api_key = st.secrets["general"]["OPENAI_API_KEY"]
+            except KeyError:
+                # Fallback to environment variable
+                openai_api_key = os.getenv("OPENAI_API_KEY")
+            
+            if not openai_api_key:
+                st.error("OpenAI API key not found. Please set OPENAI_API_KEY in Streamlit secrets or .env file.")
                 return False
             
             # Initialize embeddings
             self.embeddings = OpenAIEmbeddings(
-                openai_api_key=os.getenv("OPENAI_API_KEY")
+                openai_api_key=openai_api_key
             )
             
             # Initialize LLM
             self.llm = ChatOpenAI(
                 model_name="gpt-4",
                 temperature=0.1,
-                openai_api_key=os.getenv("OPENAI_API_KEY")
+                openai_api_key=openai_api_key
             )
             
             # Load or create vector store
