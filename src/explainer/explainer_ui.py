@@ -19,7 +19,17 @@ class ExplainerUI:
         self.learning_goals_manager = LearningGoalsManager()
         
     def render_main_page(self, user_id: str, user_group: int):
-        """Render the simplified explAIner page with learning goals checklist."""
+        """Render the explAIner page - either checklist or learning flow."""
+        # Check which page mode we're in
+        page_mode = st.session_state.get("page_mode", "checklist")
+        
+        if page_mode == "learning_flow":
+            self._render_learning_flow_page(user_id)
+        else:
+            self._render_checklist_page(user_id)
+    
+    def _render_checklist_page(self, user_id: str):
+        """Render the main checklist page with learning goals."""
         st.title("📚 Learning to Sigil")
         
         # Motivational intro text
@@ -33,6 +43,196 @@ class ExplainerUI:
         
         # Display learning goals checklist
         self._render_learning_goals_checklist(user_id)
+        
+        # Add learning experience button
+        st.markdown("---")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button(
+                "🚀 Lernerfahrung starten", 
+                key="start_learning_experience",
+                help="Beginnen Sie Ihre strukturierte Lernreise durch alle Lernziele",
+                use_container_width=True
+            ):
+                st.session_state.page_mode = "learning_flow"
+                st.session_state.current_goal_index = 0
+                st.session_state.learning_phase = "information"  # information, train, test
+                st.rerun()
+    
+    def _render_learning_flow_page(self, user_id: str):
+        """Render the learning flow page with stepper and goal information."""
+        # Get current state
+        current_goal_index = st.session_state.get("current_goal_index", 0)
+        learning_phase = st.session_state.get("learning_phase", "information")
+        
+        # Get learning goals
+        goals = self.learning_goals_manager.get_learning_goals()
+        if not goals or current_goal_index >= len(goals):
+            st.error("⚠️ Fehler beim Laden der Lernziele.")
+            return
+        
+        current_goal = goals[current_goal_index]
+        
+        # Header with back button
+        col1, col2 = st.columns([1, 6])
+        with col1:
+            if st.button("← Zurück", key="back_to_checklist"):
+                st.session_state.page_mode = "checklist"
+                st.rerun()
+        
+        with col2:
+            st.title(f"🎯 Lernziel {current_goal_index + 1}: {current_goal['description'][:50]}...")
+        
+        # Stepper UI
+        self._render_stepper(learning_phase)
+        
+        # Current phase content
+        if learning_phase == "information":
+            self._render_information_phase(current_goal, current_goal_index)
+        elif learning_phase == "train":
+            self._render_training_phase(current_goal, current_goal_index)
+        elif learning_phase == "test":
+            self._render_test_phase(current_goal, current_goal_index)
+    
+    def _render_stepper(self, current_phase: str):
+        """Render the stepper UI showing the learning phases."""
+        phases = [
+            ("information", "📚 Informationen sammeln"),
+            ("train", "🏋️ Trainieren"),
+            ("test", "📋 Testen")
+        ]
+        
+        # Create stepper visualization
+        cols = st.columns(len(phases))
+        
+        for i, (phase_key, phase_name) in enumerate(phases):
+            with cols[i]:
+                if phase_key == current_phase:
+                    # Current phase - highlighted
+                    st.markdown(f"""
+                    <div style="
+                        background-color: #1f77b4;
+                        color: white;
+                        padding: 10px;
+                        border-radius: 5px;
+                        text-align: center;
+                        font-weight: bold;
+                    ">
+                        {phase_name}
+                    </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    # Other phases - muted
+                    st.markdown(f"""
+                    <div style="
+                        background-color: #f0f0f0;
+                        color: #666;
+                        padding: 10px;
+                        border-radius: 5px;
+                        text-align: center;
+                    ">
+                        {phase_name}
+                    </div>
+                    """, unsafe_allow_html=True)
+        
+        st.markdown("---")
+    
+    def _render_information_phase(self, current_goal: dict, goal_index: int):
+        """Render the information gathering phase."""
+        st.markdown(f"### 📚 Informationen für Lernziel {goal_index + 1}")
+        
+        # Load and display goal-specific information
+        info_content = self._load_goal_information(goal_index + 1)
+        
+        if info_content:
+            st.markdown(info_content)
+        else:
+            st.warning("⚠️ Informationen für dieses Lernziel konnten nicht geladen werden.")
+        
+        # Navigation buttons
+        st.markdown("---")
+        col1, col2, col3 = st.columns([1, 1, 1])
+        
+        with col2:
+            if st.button("➡️ Weiter zum Training", key="to_training", use_container_width=True):
+                st.session_state.learning_phase = "train"
+                st.rerun()
+    
+    def _render_training_phase(self, current_goal: dict, goal_index: int):
+        """Render the training phase."""
+        st.markdown(f"### 🏋️ Training für Lernziel {goal_index + 1}")
+        st.info("🚧 Trainingsbereich wird in einer zukünftigen Version implementiert.")
+        
+        # Navigation buttons
+        st.markdown("---")
+        col1, col2, col3 = st.columns([1, 1, 1])
+        
+        with col1:
+            if st.button("← Zurück zu Informationen", key="back_to_info", use_container_width=True):
+                st.session_state.learning_phase = "information"
+                st.rerun()
+        
+        with col3:
+            if st.button("➡️ Weiter zum Test", key="to_test", use_container_width=True):
+                st.session_state.learning_phase = "test"
+                st.rerun()
+    
+    def _render_test_phase(self, current_goal: dict, goal_index: int):
+        """Render the test phase."""
+        st.markdown(f"### 📋 Test für Lernziel {goal_index + 1}")
+        st.info("🚧 Testbereich wird in einer zukünftigen Version implementiert.")
+        
+        # Navigation buttons
+        st.markdown("---")
+        col1, col2, col3 = st.columns([1, 1, 1])
+        
+        with col1:
+            if st.button("← Zurück zum Training", key="back_to_training", use_container_width=True):
+                st.session_state.learning_phase = "train"
+                st.rerun()
+        
+        with col3:
+            goals = self.learning_goals_manager.get_learning_goals()
+            if goal_index + 1 < len(goals):
+                if st.button("➡️ Nächstes Lernziel", key="next_goal", use_container_width=True):
+                    st.session_state.current_goal_index += 1
+                    st.session_state.learning_phase = "information"
+                    st.rerun()
+            else:
+                if st.button("🎉 Abschließen", key="complete_learning", use_container_width=True):
+                    st.session_state.page_mode = "checklist"
+                    st.success("🎉 Herzlichen Glückwunsch! Sie haben alle Lernziele durchlaufen!")
+                    st.rerun()
+    
+    def _load_goal_information(self, goal_number: int) -> str:
+        """Load goal-specific information from markdown files."""
+        import os
+        
+        # Map goal numbers to file names
+        goal_files = {
+            1: "goal_1_components.md",
+            2: "goal_2_functions.md", 
+            3: "goal_3_assembly.md",
+            4: "goal_4_analysis.md",
+            5: "goal_5_evaluation.md"
+        }
+        
+        if goal_number not in goal_files:
+            return None
+        
+        # Construct file path
+        current_dir = os.path.dirname(__file__)
+        project_root = os.path.dirname(os.path.dirname(current_dir))
+        info_file_path = os.path.join(project_root, "data", "information", goal_files[goal_number])
+        
+        try:
+            if os.path.exists(info_file_path):
+                with open(info_file_path, 'r', encoding='utf-8') as f:
+                    return f.read()
+            else:
+                return f"⚠️ Informationsdatei nicht gefunden: {info_file_path}"
+        except Exception as e:
+            return f"❌ Fehler beim Laden der Informationen: {str(e)}"
     
     def _render_learning_goals_checklist(self, user_id: str):
         """Render the learning goals as an interactive checklist."""
