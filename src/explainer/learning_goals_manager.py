@@ -32,37 +32,27 @@ class LearningGoalsManager:
                 with open(self.goals_file_path, 'r', encoding='utf-8') as f:
                     content = f.read()
                 
-                # Parse markdown content
+                # Parse markdown content - new simple bullet list format
                 lines = content.strip().split('\n')
-                current_goal = None
                 
-                for line in lines:
+                for i, line in enumerate(lines):
                     line = line.strip()
-                    if line.startswith('# '):
-                        # New goal header
-                        if current_goal:
-                            goals.append(current_goal)
-                        
-                        # Extract goal number and title
-                        header = line[2:].strip()  # Remove '# '
-                        if '. ' in header:
-                            number, title = header.split('. ', 1)
-                            current_goal = {
-                                'id': f"goal_{number}",
-                                'number': number,
-                                'title': title,
-                                'description': ""
-                            }
-                    elif line.startswith('Learning objective:') and current_goal:
-                        # Extract learning objective
-                        current_goal['description'] = line.replace('Learning objective:', '').strip()
-                
-                # Add the last goal
-                if current_goal:
-                    goals.append(current_goal)
-                    
+                    if line.startswith('- '):
+                        # Extract bullet point content
+                        description = line[2:].strip()  # Remove '- '
+                        goal = {
+                            'id': f'goal_{i + 1}',
+                            'number': str(i + 1),
+                            'title': f'Lernziel {i + 1}',
+                            'description': description
+                        }
+                        goals.append(goal)
+            
+            else:
+                st.warning(f"⚠️ Learning goals file not found: {self.goals_file_path}")
+        
         except Exception as e:
-            st.error(f"Fehler beim Laden der Lernziele: {e}")
+            st.error(f"❌ Error loading learning goals: {str(e)}")
         
         return goals
     

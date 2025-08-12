@@ -18,46 +18,87 @@ class ExplainerUI:
         self.logger = logger
         self.learning_goals_manager = LearningGoalsManager()
         
-    def render_main_page(self, user_id: str, user_group: int) -> None:
-        """Render the main explAIner interface."""
-        st.title("🎆 explAIner - AI Verstehen & Erklären")
+    def render_main_page(self, user_id: str, user_group: int):
+        """Render the simplified explAIner page with learning goals checklist."""
+        st.title("📚 Learning to Sigil")
         
-        # Check if system is configured
-        if not self.core.is_configured():
-            st.error("⚠️ explAIner System nicht konfiguriert. OpenAI API Key fehlt.")
-            return
-            
+        # Motivational intro text
         st.markdown("""
-        ### Willkommen beim explAIner System! 🚀
+        ### Das sind die Lernziele, die Sie für die Abschlussprüfung benötigen.
         
-        Hier können Sie komplexe AI-Konzepte verstehen und sich erklären lassen.
-        Das System hilft Ihnen dabei, KI-Entscheidungen besser zu verstehen.
+        🎯 **Um erfolgreich voranzukommen, müssen Sie alle Lernziele erreichen.**
+        
+        Markieren Sie jedes Lernziel als erreicht, sobald Sie es beherrschen:
         """)
         
-        # Main interface tabs
-        tab1, tab2, tab3, tab4, tab5 = st.tabs([
-            "🎯 Lernziele",
-            "🔍 Erklärung anfordern", 
-            "📚 Lernpfad", 
-            "💡 Beispiele",
-            "📊 Meine Aktivität"
-        ])
-        
-        with tab1:
-            self._render_learning_goals_tab(user_id)
-            
-        with tab2:
-            self._render_explanation_tab(user_id)
-            
-        with tab3:
-            self._render_learning_path_tab(user_id)
-            
-        with tab4:
-            self._render_examples_tab()
-            
-        with tab5:
-            self._render_activity_tab(user_id)
+        # Display learning goals checklist
+        self._render_learning_goals_checklist(user_id)
     
+    def _render_learning_goals_checklist(self, user_id: str):
+        """Render the learning goals as an interactive checklist."""
+        # Load learning goals from markdown file
+        goals = self.learning_goals_manager.get_learning_goals()
+        
+        if not goals:
+            st.warning("⚠️ Lernziele konnten nicht geladen werden.")
+            return
+        
+        # Get current progress
+        progress = self.learning_goals_manager.get_user_progress(user_id)
+        
+        # Display each learning goal as a checkbox
+        st.markdown("---")
+        
+        completed_count = 0
+        for goal in goals:
+            goal_id = goal['id']
+            is_completed = progress.get(goal_id, False)
+            
+            # Create checkbox for each goal
+            col1, col2 = st.columns([0.1, 0.9])
+            
+            with col1:
+                # Checkbox
+                new_status = st.checkbox(
+                    "", 
+                    value=is_completed,
+                    key=f"goal_checkbox_{goal_id}",
+                    label_visibility="collapsed"
+                )
+                
+                # Update progress if changed
+                if new_status != is_completed:
+                    self.learning_goals_manager.update_goal_progress(user_id, goal_id, new_status)
+                    st.rerun()
+            
+            with col2:
+                # Goal description with status indicator
+                status_icon = "✅" if new_status else "⭕"
+                st.markdown(f"{status_icon} **{goal['description']}**")
+            
+            if new_status:
+                completed_count += 1
+        
+        st.markdown("---")
+        
+        # Progress summary and motivational message
+        total_goals = len(goals)
+        progress_percentage = (completed_count / total_goals) * 100 if total_goals > 0 else 0
+        
+        # Progress bar
+        st.progress(progress_percentage / 100)
+        st.markdown(f"**Fortschritt: {completed_count}/{total_goals} Lernziele erreicht ({progress_percentage:.0f}%)**")
+        
+        # Motivational messages based on progress
+        if completed_count == 0:
+            st.info("🚀 **Beginnen Sie mit dem ersten Lernziel!** Jeder Schritt bringt Sie näher zum Erfolg.")
+        elif completed_count < total_goals:
+            remaining = total_goals - completed_count
+            st.info(f"💪 **Großartig! Noch {remaining} Lernziel{'e' if remaining > 1 else ''} bis zum Abschluss!** Sie sind auf dem richtigen Weg.")
+        else:
+            st.success("🎉 **Herzlichen Glückwunsch!** Sie haben alle Lernziele erreicht und können zur Prüfung antreten!")
+            st.balloons()
+        
     def _render_learning_goals_tab(self, user_id: str) -> None:
         """Render the learning goals tracking interface."""
         # Show next goal suggestion at the top
