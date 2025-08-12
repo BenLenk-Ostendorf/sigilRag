@@ -15,7 +15,15 @@ class ExplainerCore:
     
     def __init__(self):
         """Initialize the explAIner core system."""
-        self.openai_api_key = os.getenv("OPENAI_API_KEY")
+        # Use separate Streamlit secret for explAIner OpenAI API key
+        try:
+            self.openai_api_key = st.secrets["explainer"]["OPENAI_API_KEY"]
+        except KeyError:
+            # Fallback to environment variable for development
+            self.openai_api_key = os.getenv("EXPLAINER_OPENAI_API_KEY")
+            if not self.openai_api_key:
+                st.warning("⚠️ explAIner OpenAI API key not found in secrets or environment variables.")
+        
         if self.openai_api_key:
             openai.api_key = self.openai_api_key
         
