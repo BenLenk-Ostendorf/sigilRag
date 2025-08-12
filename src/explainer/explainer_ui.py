@@ -7,6 +7,7 @@ import streamlit as st
 from typing import Dict, List, Optional, Any
 from .explainer_core import ExplainerCore
 from .explainer_logger import ExplainerLogger
+from .learning_goals_manager import LearningGoalsManager
 
 class ExplainerUI:
     """User interface handler for the explAIner system."""
@@ -15,6 +16,7 @@ class ExplainerUI:
         """Initialize the explAIner UI with core system and logger."""
         self.core = core
         self.logger = logger
+        self.learning_goals_manager = LearningGoalsManager()
         
     def render_main_page(self, user_id: str, user_group: int) -> None:
         """Render the main explAIner interface."""
@@ -33,7 +35,8 @@ class ExplainerUI:
         """)
         
         # Main interface tabs
-        tab1, tab2, tab3, tab4 = st.tabs([
+        tab1, tab2, tab3, tab4, tab5 = st.tabs([
+            "🎯 Lernziele",
             "🔍 Erklärung anfordern", 
             "📚 Lernpfad", 
             "💡 Beispiele",
@@ -41,16 +44,45 @@ class ExplainerUI:
         ])
         
         with tab1:
-            self._render_explanation_tab(user_id)
+            self._render_learning_goals_tab(user_id)
             
         with tab2:
-            self._render_learning_path_tab(user_id)
+            self._render_explanation_tab(user_id)
             
         with tab3:
-            self._render_examples_tab()
+            self._render_learning_path_tab(user_id)
             
         with tab4:
+            self._render_examples_tab()
+            
+        with tab5:
             self._render_activity_tab(user_id)
+    
+    def _render_learning_goals_tab(self, user_id: str) -> None:
+        """Render the learning goals tracking interface."""
+        # Show next goal suggestion at the top
+        self.learning_goals_manager.render_next_goal_suggestion(user_id)
+        
+        st.divider()
+        
+        # Main learning goals overview
+        self.learning_goals_manager.render_learning_goals_overview(user_id)
+        
+        # Add some helpful tips
+        st.divider()
+        
+        with st.expander("💡 Tipps zum Erreichen der Lernziele"):
+            st.markdown("""
+            **So erreichen Sie Ihre Lernziele effektiv:**
+            
+            1. **📖 Verstehen Sie das Ziel**: Lesen Sie die Beschreibung jedes Lernziels sorgfältig durch
+            2. **🔍 Nutzen Sie die Erklärungen**: Verwenden Sie den "Erklärung anfordern" Tab für schwierige Konzepte
+            3. **📚 Folgen Sie dem Lernpfad**: Der strukturierte Lernpfad hilft beim systematischen Lernen
+            4. **💡 Probieren Sie Beispiele**: Praktische Beispiele vertiefen das Verständnis
+            5. **✅ Markieren Sie erreichte Ziele**: Seien Sie ehrlich bei der Selbsteinschätzung
+            
+            **Tipp**: Arbeiten Sie die Lernziele der Reihe nach ab - sie bauen aufeinander auf!
+            """)
     
     def _render_explanation_tab(self, user_id: str) -> None:
         """Render the explanation request interface."""
@@ -229,11 +261,20 @@ class ExplainerUI:
         """Render user activity and statistics."""
         st.subheader("📊 Ihre explAIner Aktivität")
         
+        # Learning Goals Progress Summary
+        st.markdown("### 🎯 Lernfortschritt")
+        self.learning_goals_manager.render_progress_summary(user_id)
+        
+        st.divider()
+        
         # Get user statistics from logger
         stats = self.logger.get_user_statistics(user_id)
+        learning_stats = self.learning_goals_manager.get_progress_statistics(user_id)
+        
+        st.markdown("### 📊 Aktivitätsstatistiken")
         
         if stats:
-            col1, col2, col3 = st.columns(3)
+            col1, col2, col3, col4 = st.columns(4)
             
             with col1:
                 st.metric("🔍 Erklärungen", stats.get("total_explanations", 0))
@@ -243,6 +284,9 @@ class ExplainerUI:
             
             with col3:
                 st.metric("⏱️ Aktive Zeit", f"{stats.get('session_time', 0)} min")
+            
+            with col4:
+                st.metric("🎯 Lernziele", f"{learning_stats['completed_goals']}/{learning_stats['total_goals']}")
             
             # Recent activity
             st.markdown("### 📝 Letzte Aktivitäten")
