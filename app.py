@@ -20,6 +20,9 @@ from src.logger import SiegelLogger
 from src.dashboard import SiegelDashboard
 from src.utils import display_validation_status
 
+# Import explAIner system (separate from RAG)
+from src.explainer import ExplainerCore, ExplainerUI, ExplainerLogger
+
 
 # Page configuration
 st.set_page_config(
@@ -100,6 +103,15 @@ def initialize_systems():
         return rag_system, logger
     else:
         return None, logger
+
+@st.cache_resource
+def initialize_explainer_systems():
+    """Initialize explAIner system components (separate from RAG)."""
+    explainer_core = ExplainerCore()
+    explainer_logger = ExplainerLogger()
+    explainer_ui = ExplainerUI(explainer_core, explainer_logger)
+    
+    return explainer_core, explainer_ui, explainer_logger
 
 def main():
     """Main application logic."""
@@ -372,20 +384,36 @@ def render_system_page(rag_system):
 
 def render_group1_blocked_page():
     """Render blocked access page for Group 1 users."""
-    st.title("🚫 Zugang gesperrt")
+    st.title("🚫 Zugang gesperrt - Falsche Navigation")
+    
+    st.error("⚠️ Sie wurden fälschlicherweise zu diesem System weitergeleitet.")
     
     st.markdown("""
     ### Liebe/r Teilnehmer/in,
     
-    Ihr Zugang zu diesem System ist derzeit nicht freigeschaltet.
+    **Sie sind nicht für dieses System vorgesehen.** Es scheint, als wären Sie fälschlicherweise hierher navigiert worden.
     
-    **Bitte wenden Sie sich an:**
-    📧 **ben.lenkostendorf@tum.de**
+    **Bitte kontaktieren Sie umgehend:**
     
-    Wir werden Ihnen so schnell wie möglich weiterhelfen.
+    📧 **Ben Lenk-Ostendorf**  
+    ✉️ **ben.lenk-ostendorf@tum.de**
     
-    Vielen Dank für Ihr Verständnis!
+    **Teilen Sie mit:**
+    - Dass Sie fälschlicherweise zum RAG/explAIner System weitergeleitet wurden
+    - Ihren Teilnehmercode (falls vorhanden)
+    - Wie Sie zu diesem System gelangt sind
+    
+    Ben wird Ihnen das korrekte System zuweisen und Sie entsprechend weiterleiten.
+    
+    **Vielen Dank für Ihr Verständnis!**
     """)
+    
+    # Add visual emphasis
+    st.divider()
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.info("💡 **Wichtig:** Schließen Sie diese Seite und warten Sie auf weitere Anweisungen von Ben Lenk-Ostendorf.")
     
     # Add some visual separation
     st.divider()
@@ -393,43 +421,21 @@ def render_group1_blocked_page():
     st.info("📞 Bei Fragen können Sie sich jederzeit an die oben genannte E-Mail-Adresse wenden.")
 
 def render_explainer_page():
-    """Render placeholder page for Group 3 explAIner users."""
-    st.title("🎆 Welcome to the explAIner")
+    """Render the explAIner system page for Group 3 users."""
+    # Initialize explAIner systems
+    explainer_core, explainer_ui, explainer_logger = initialize_explainer_systems()
     
-    st.markdown("""
-    ### Willkommen beim explAIner System!
+    # Get current user info
+    auth = st.session_state.auth
+    user_id = auth.get_user_id()
+    user_group = auth.get_group()
     
-    🚀 **Das explAIner System ist in Entwicklung...**
+    if not user_id:
+        st.error("❌ Benutzer nicht authentifiziert")
+        return
     
-    Hier werden Sie bald Zugang zu unserem innovativen explAIner-Tool haben, 
-    das Ihnen dabei hilft, KI-Entscheidungen besser zu verstehen und zu erklären.
-    
-    ### Was Sie erwarten können:
-    - 🔍 **Interaktive Erklärungen** von KI-Modellen
-    - 📊 **Visualisierungen** komplexer Algorithmen  
-    - 🎯 **Personalisierte Lernpfade** für AI-Verständnis
-    - 💡 **Praktische Beispiele** und Übungen
-    
-    ### Status:
-    🚧 **In Entwicklung** - Bald verfügbar!
-    
-    Vielen Dank für Ihre Geduld. Das explAIner-Team arbeitet hart daran, 
-    Ihnen bald eine außergewöhnliche Lernerfahrung zu bieten.
-    """)
-    
-    # Add some visual elements
-    st.divider()
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.metric("📈 Fortschritt", "75%")
-    
-    with col2:
-        st.metric("📅 Geschätzte Fertigstellung", "Bald")
-    
-    with col3:
-        st.metric("👥 Beta-Tester", "Gesucht!")
+    # Render the explAIner UI
+    explainer_ui.render_main_page(user_id, user_group)
     
     st.success("📧 Für Updates und Beta-Zugang: ben.lenkostendorf@tum.de")
 
