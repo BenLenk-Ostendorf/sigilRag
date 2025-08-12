@@ -2,23 +2,29 @@
 echo Starting Siegel RAG System...
 echo.
 
-REM Check if .env file exists
+REM Check if .env file exists (optional - we use Streamlit secrets)
 if not exist .env (
-    echo ERROR: .env file not found!
-    echo Please copy .env.example to .env and add your OpenAI API key.
+    echo INFO: .env file not found - using Streamlit secrets instead.
+    echo If running locally, make sure .streamlit/secrets.toml is configured.
     echo.
-    pause
-    exit /b 1
 )
 
 REM Check if virtual environment exists
-if not exist venv (
-    echo Creating virtual environment...
-    python -m venv venv
+if not exist .venv (
+    if not exist venv (
+        echo Creating virtual environment...
+        python -m venv .venv
+    ) else (
+        echo Using existing venv directory...
+    )
 )
 
 REM Activate virtual environment
-call venv\Scripts\activate.bat
+if exist .venv\Scripts\activate.bat (
+    call .venv\Scripts\activate.bat
+) else (
+    call venv\Scripts\activate.bat
+)
 
 REM Install dependencies
 echo Installing dependencies...
