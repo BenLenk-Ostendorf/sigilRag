@@ -1,5 +1,0 @@
-- You can correctly name the individual components of a seal.
-- You can explain the function of the individual components of the seal.
-- You can correctly assemble a seal according to given data.
-- You can deduce missing information from an incomplete seal.
-- You can identify errors in seals and correct them.

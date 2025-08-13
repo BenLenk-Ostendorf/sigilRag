@@ -43,7 +43,7 @@ Das verkürzte Gründungsjahr im Zentrum kann zur Identifikation genutzt werden 
 ### 2. Ableitung durch Siegelkomponenten
 
 #### Bundeslandshintergrund
-Die Farben des Hintergrunds verraten das Bundesland. Daraus können Sie die möglichen Städte eingrenzen.
+Die Farben des Hintergrunds verraten das Bundesland. Daraus können Sie die möglichen Städte eingrenzen. Aber bedenken Sie, dass es viele Städte auch mit ähnlicher Orientierung geben kann.
 
 #### Bevölkerungsrahmen
 - Zweifarbiger Rand mit grünen Spitzen → über 1 Million Einwohner

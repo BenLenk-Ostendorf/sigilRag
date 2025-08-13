@@ -3,7 +3,7 @@
 Ein Stadtsiegel besteht aus verschiedenen Komponenten, die jeweils eine spezifische Funktion erfüllen:
 
 ## 1. Bundeslandshintergrund (State Background)
-Der Hintergrund des Siegels wird durch das Bundesland der Stadt bestimmt und enthält die Farben der Landesflagge. Beispiel: Bayern ist blau-weiß.
+Der Hintergrund des Siegels wird durch das Bundesland der Stadt bestimmt und enthält die Farben der Landesflagge. Beispiel: Bayern ist blau-weiß. Wenn es häufige Farbkombinationen gibt (zum Beispiel rot-weiß) sind die Farben an der jeweiligen Landesflagge orientiert.
 
 ## 2. Bevölkerungsrahmen (Population Frame)
 Der Rahmen wird durch die Bevölkerungszahl der Stadt bestimmt:
@@ -19,7 +19,7 @@ Die Hauptstadtkrone wird nur für Hauptstädte und Bonn verwendet:
 - Für andere Städte: Keine Hauptstadtkrone
 
 ## 4. Orientierungskreis/Lagekreis (Orientation Circle/Location Circle)
-Die Lagekreise stellen die ungefähre geografische Lage der Stadt innerhalb des Bundeslandes dar. Der schwarze Kreis ist im Hintergrund, der gelbe Kreis im Vordergrund. Bei Stadtstaaten wird der komplett gelb gefüllte Kreis verwendet.
+Die Lagekreise stellen die ungefähre geografische Lage der Stadt innerhalb des Bundeslandes dar. Der schwarze Kreis ist im Hintergrund, der gelbe Kreis im Vordergrund. Bei Stadtstaaten (wie Berlin) wird der komplett gelb gefüllte Kreis verwendet.
 
 ## 5. Textelemente
 

@@ -1,55 +1,52 @@
 # Siegel korrekt nach gegebenen Daten zusammensetzen
 
-## Schritt-für-Schritt Erstellungsprozess
+## Schritt-für-Schritt Erstellungsprozess am Beispiel München
 
 ### 1. Stadtdaten sammeln
-Um ein Siegel für eine Stadt zu erstellen, benötigen Sie die Daten der Stadt:
+**Für München benötigen wir folgende Daten:**
 
-- Farbe der Landesflagge
-- Bevölkerungsklasse (über 500.000 oder über 1 Million Einwohner)
-- Hauptstadtstatus (Bundeshauptstadt, Landeshauptstadt oder Bonn)
-- Lage im Bundesland (Nord, Süd, Ost, West, Nordost, Nordwest, Südost, Südwest, Zentral oder Stadtstaat)
-- Buchstabe(n) des Kfz-Kennzeichens
-- Koordinaten (ungefähre Breiten- und Längengrade)
-- Gründungsjahr
+- **Stadt**: München
+- **Bundesland**: Bayern
+- **Einwohner**: 1.488.202 (über 1 Million)
+- **Hauptstadtstatus**: Landeshauptstadt von Bayern
+- **Lage im Bundesland**: Süd
+- **Kfz-Kennzeichen**: M
+- **Koordinaten**: 48.1371° N, 11.5755° E (gerundet: 48|11)
+- **Gründungsjahr**: 1158
 
 ### 2. Bundeslandshintergrund wählen
-Der Bundeslandshintergrund wird durch das Bundesland der Stadt bestimmt und enthält die Farben der Landesflagge. Beispiel: Bayern ist blau-weiß.
+**Für München:**
+Der Bundeslandshintergrund wird durch Bayern bestimmt und enthält die Farben der bayerischen Landesflagge: **Blau-Weiß**.
 
 ### 3. Bevölkerungsrahmen wählen
-Der Bevölkerungsrahmen wird durch die Bevölkerung der Stadt (Bevölkerungsklasse) bestimmt:
+**Für München:**
+München hat 1.488.202 Einwohner (über 1 Million), daher verwenden wir den **zweifarbigen Rand mit grünen Spitzen**.
 
-- Für Städte mit über 1 Million Einwohnern: Zweifarbigen Rand mit grünen Spitzen verwenden
-- Für Städte mit 500.000 bis 1 Million Einwohnern: Zweifarbigen Rand mit Erhebungen verwenden
-- Für Städte mit weniger als 500.000 Einwohnern: Einfarbigen Rand verwenden
-
-### 4. Hauptstadtkrone wählen (falls zutreffend)
-Die Hauptstadtkrone wird nur für Hauptstädte und Bonn verwendet:
-
-- Für Bundeshauptstädte: Krone mit zwei Unterstrichen in umgekehrten deutschen Flaggenfarben verwenden
-- Für Landeshauptstädte: Krone mit rotem Unterstrich verwenden
-- Für die ehemalige Bundeshauptstadt: Ausschließlich die Krone verwenden
-- Für andere Städte: Keine Hauptstadtkrone
+### 4. Hauptstadtkrone wählen
+**Für München:**
+München ist die Landeshauptstadt von Bayern, daher verwenden wir die **Krone mit rotem Unterstrich**.
 
 ### 5. Orientierungskreis wählen
-Die Lagekreise stellen die ungefähre geografische Lage der Stadt innerhalb des Bundeslandes dar. Der schwarze Kreis ist im Hintergrund, der gelbe Kreis im Vordergrund. Bei Stadtstaaten den komplett gelb gefüllten Kreis verwenden.
+**Für München:**
+München liegt im Süden von Bayern, daher positionieren wir den **gelben Kreis im südlichen Bereich** des Siegels (schwarzer Kreis im Hintergrund, gelber Kreis im Vordergrund).
 
 ### 6. Textelemente hinzufügen
 
-#### Kurzkennzeichen
-Auf der linken Seite die Buchstaben des Kfz-Kennzeichens der jeweiligen Stadt zur präzisen Identifizierung eintragen.
+#### Kurzkennzeichen für München
+Auf der linken Seite tragen wir das Kfz-Kennzeichen **"M"** ein.
 
-#### Koordinatenrechteck
-Die ungefähren Koordinaten der Stadt auf der rechten Seite im Format "LAT|LON" angeben (z.B. "48|11").
+#### Koordinatenrechteck für München
+Auf der rechten Seite tragen wir die gekürzten Koordinaten **"48|11"** ein (48° Nord, 11° Ost).
 
-#### Gründungsmittelpunkt
-Im Zentrum das Gründungsjahr der Stadt eintragen (verkürzt auf die ersten zwei Ziffern).
+#### Gründungsmittelpunkt für München
+Im Zentrum des Siegels tragen wir **"12"** ein (Gründungsjahr 1158, gerundet auf die ersten zwei Ziffern).
 
-## Beispiel: München
-- Bundeslandshintergrund: Blau-Weiß
-- Bevölkerungsrahmen: Zweifarbig Schwarz-Grün mit Spitzen
-- Hauptstadtkrone: Krone mit rotem Unterstrich
-- Orientierungskreis: Süd
-- Gründungsmittelpunkt: "12" (Gründungsjahr 1158, verkürzt auf die ersten zwei Ziffern)
-- Kurzkennzeichen: "M"
-- Koordinatenrechteck: "48|11"
+## Vollständiges München-Siegel
+**Das fertige Siegel für München enthält:**
+- **Bundeslandshintergrund**: Blau-Weiß (Bayern)
+- **Bevölkerungsrahmen**: Zweifarbig Schwarz-Grün mit Spitzen (>1 Million Einwohner)
+- **Hauptstadtkrone**: Krone mit rotem Unterstrich (Landeshauptstadt)
+- **Orientierungskreis**: Gelber Kreis im Süden (geografische Lage in Bayern)
+- **Kurzkennzeichen**: "M" (links)
+- **Koordinatenrechteck**: "48|11" (rechts)
+- **Gründungsmittelpunkt**: "12" (Zentrum)

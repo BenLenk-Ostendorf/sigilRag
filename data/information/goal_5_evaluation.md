@@ -58,7 +58,7 @@ Um Fehler zu identifizieren, müssen Sie zunächst die korrekten Standards für 
 ### 4. Statusfehler
 - **Beispiel**: Düsseldorf ohne Landeshauptstadtkrone
 - **Beispiel**: Köln mit Hauptstadtkrone (ist keine Hauptstadt)
-- **Beispiel**: Bonn mit Landeshauptstadtkrone statt nur der Krone
+- **Beispiel**: Bonn mit Landeshauptstadtkrone (zwei Unterstriche) statt nur der Krone (ein Unterstrich)
 
 ## Systematische Fehlerprüfung
 
@@ -73,69 +73,3 @@ Um Fehler zu identifizieren, müssen Sie zunächst die korrekten Standards für 
 3. **Hauptstadtkrone**: Ist der Status korrekt dargestellt?
 4. **Orientierungskreis**: Stimmt die geografische Position?
 5. **Textelemente**: Sind alle Angaben korrekt?
-
-### Schritt 3: Korrekturvorschläge
-Für jeden identifizierten Fehler:
-1. **Fehlerart benennen**: Was ist falsch?
-2. **Ursache identifizieren**: Warum ist es falsch?
-3. **Korrektur vorschlagen**: Wie sollte es richtig sein?
-4. **Begründung liefern**: Warum ist die Korrektur richtig?
-
-## Beispiel einer vollständigen Fehleranalyse
-
-**Fehlerhaftes Siegel**: München mit einfarbigem Rand, ohne Hauptstadtkrone, gelber Kreis im Norden
-
-**Fehleridentifikation**:
-1. **Bevölkerungsrahmen falsch**: Einfarbig statt zweifarbig mit grünen Spitzen
-2. **Hauptstadtkrone fehlt**: München ist Landeshauptstadt
-3. **Orientierungskreis falsch**: Nord statt Süd
-
-**Korrekturen**:
-1. **Bevölkerungsrahmen**: Zweifarbiger Rand mit grünen Spitzen (>1 Million Einwohner)
-2. **Hauptstadtkrone**: Krone mit rotem Unterstrich hinzufügen (Landeshauptstadt)
-3. **Orientierungskreis**: Gelben Kreis in südliche Position verschieben
-
-## Korrekturmethoden
-
-### 1. Präventive Maßnahmen
-- **Qualitätskontrolle**: Systematische Überprüfung vor der Anwendung
-- **Materialprüfung**: Kontrolle von Siegelring und -masse
-- **Positionsplanung**: Vorab-Markierung der Siegelposition
-
-### 2. Korrektive Maßnahmen
-
-#### Bei technischen Fehlern
-- **Neuanfertigung**: Komplette Wiederholung des Siegelvorgangs
-- **Reparatur**: Vorsichtige Nachbesserung kleiner Defekte
-- **Verstärkung**: Zusätzliche Siegelmasse bei unvollständigen Abdrücken
-
-#### Bei inhaltlichen Fehlern
-- **Ersetzung**: Entfernung und Neuanbringung mit korrektem Siegel
-- **Zusatzsiegel**: Ergänzendes Siegel zur Klarstellung
-- **Dokumentation**: Schriftliche Erklärung der Korrektur
-
-#### Bei Positionierungsfehlern
-- **Neupositionierung**: Vorsichtige Entfernung und korrekte Platzierung
-- **Zusätzliche Markierung**: Pfeile oder Hinweise zur korrekten Zuordnung
-- **Erläuternde Notiz**: Schriftliche Erklärung der beabsichtigten Position
-
-## Qualitätssicherung
-
-### Checkliste für fehlerfreie Siegel
-- [ ] Vollständiger und klarer Abdruck
-- [ ] Korrekte Orientierung des Motivs
-- [ ] Angemessene Positionierung auf dem Dokument
-- [ ] Saubere und gleichmäßige Ränder
-- [ ] Keine Luftblasen oder Risse
-- [ ] Passende Siegelgröße für den Verwendungszweck
-- [ ] Historisch und stilistisch korrekte Elemente
-
-### Dokumentation von Korrekturen
-- **Fehlerbeschreibung**: Was war falsch?
-- **Korrekturmaßnahme**: Wie wurde es behoben?
-- **Qualitätsprüfung**: Bestätigung der erfolgreichen Korrektur
-- **Präventionshinweise**: Wie kann der Fehler zukünftig vermieden werden?
-
-## Erfolgskriterium
-
-Sie haben dieses Lernziel erreicht, wenn Sie systematisch Fehler in Siegeln identifizieren, angemessene Korrekturmaßnahmen auswählen und erfolgreich umsetzen können.

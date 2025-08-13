@@ -154,7 +154,7 @@ class SiegelRAGSystem:
         documents = []
         
         # Load the main guide
-        guide_file = self.data_dir / "sigil_creation_guide.md"
+        guide_file = self.data_dir / "information" / "sigil_creation_guide.md"
         if guide_file.exists():
             with open(guide_file, 'r', encoding='utf-8') as f:
                 content = f.read()

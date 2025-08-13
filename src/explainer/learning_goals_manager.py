@@ -15,9 +15,10 @@ class LearningGoalsManager:
     def __init__(self, goals_file_path: str = None):
         """Initialize the learning goals manager."""
         if goals_file_path is None:
-            # Default path to learning goals file
+            # Default path to learning goals file in data/information/
             current_dir = os.path.dirname(__file__)
-            self.goals_file_path = os.path.join(current_dir, "learning_goals", "learning_goals.md")
+            project_root = os.path.dirname(os.path.dirname(current_dir))
+            self.goals_file_path = os.path.join(project_root, "data", "information", "learning_goals.md")
         else:
             self.goals_file_path = goals_file_path
             
