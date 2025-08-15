@@ -4,13 +4,11 @@
 Der Bundeslandshintergrund erfüllt eine wichtige Identifikationsfunktion:
 - **Regionale Zuordnung**: Zeigt sofort, zu welchem Bundesland die Stadt gehört
 - **Farbkodierung**: Verwendet die spezifischen Farben der Landesflagge zur eindeutigen Identifizierung
-- **Visuelle Grundlage**: Bildet den farblichen Hintergrund für alle anderen Siegelelemente
 
 ## Bevölkerungsrahmen (Population Frame) - Größenklassifizierung
 Der Bevölkerungsrahmen hat eine klassifizierende Funktion:
 - **Größenindikator**: Zeigt auf einen Blick die Bevölkerungsklasse der Stadt
 - **Hierarchische Darstellung**: Unterscheidet zwischen Millionenstädten, Großstädten und kleineren Städten
-- **Visuelle Differenzierung**: Verschiedene Rahmentypen ermöglichen schnelle Kategorisierung
 
 ## Hauptstadtkrone (Capital Crown) - Statusanzeige
 Die Hauptstadtkrone dient der Statusidentifikation:
@@ -35,11 +33,5 @@ Die Lagekreise erfüllen eine Orientierungsfunktion:
 - **Wissenschaftliche Verortung**: Ermöglicht präzise geografische Zuordnung
 
 ### Gründungsmittelpunkt (Founding Center)
-- **Historische Information**: Zeigt das Alter und die historische Bedeutung der Stadt
+- **Historische Information**: Zeigt das Gründungsdatum und die historische Bedeutung der Stadt
 - **Zeitliche Einordnung**: Ermöglicht historische Vergleiche zwischen Städten
-
-## Zusammenwirken aller Komponenten
-Alle Siegelkomponenten arbeiten zusammen, um eine vollständige Stadtidentität zu schaffen:
-- **Vollständige Identifikation**: Jede Komponente trägt zur eindeutigen Identifizierung bei
-- **Hierarchische Information**: Verschiedene Ebenen der Stadtinformation werden dargestellt
-- **Visuelle Klarheit**: Systematische Anordnung ermöglicht schnelle Informationsaufnahme

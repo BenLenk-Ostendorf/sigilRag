@@ -57,10 +57,21 @@ class ExplainerUI:
                 st.session_state.page_mode = "learning_flow"
                 st.session_state.current_goal_index = 0
                 st.session_state.learning_phase = "information"  # information, train, test
+                # Scroll to top when navigating to learning flow
+                st.session_state.scroll_to_top = True
                 st.rerun()
     
     def _render_learning_flow_page(self, user_id: str):
         """Render the learning flow page with stepper and goal information."""
+        # Scroll to top if requested
+        if st.session_state.get("scroll_to_top", False):
+            st.components.v1.html("""
+                <script>
+                    window.parent.document.querySelector('.main').scrollTo(0, 0);
+                </script>
+            """, height=0)
+            st.session_state.scroll_to_top = False
+        
         # Get current state
         current_goal_index = st.session_state.get("current_goal_index", 0)
         learning_phase = st.session_state.get("learning_phase", "information")
@@ -97,9 +108,9 @@ class ExplainerUI:
     def _render_stepper(self, current_phase: str):
         """Render the stepper UI showing the learning phases."""
         phases = [
-            ("information", "📚 Informationen sammeln"),
+            ("information", "📚 Verstehen"),
             ("train", "🏋️ Trainieren"),
-            ("test", "📋 Testen")
+            ("test", "📋 Challange")
         ]
         
         # Create stepper visualization
