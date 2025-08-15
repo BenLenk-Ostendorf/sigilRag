@@ -109,6 +109,123 @@ class QuizSystem:
             st.error(error_msg)
             return self._get_fallback_question(learning_goal, language)
     
+    def generate_adaptive_quiz_question(self, learning_goal: dict, goal_index: int, difficulty_level: str, 
+                                      asked_questions: list, subjects_covered: list, language: str = None) -> Dict[str, Any]:
+        """Generate an adaptive quiz question that avoids repetition and varies subjects."""
+        self._load_api_key()
+        
+        if not self.openai_client:
+            return self._get_fallback_question(learning_goal, language)
+        
+        # Get language from session state or use default
+        if not language:
+            language = st.session_state.get("selected_language", PROMPT_CONFIG["default_language"])
+        
+        # Load the actual learning material content
+        learning_content = self._load_learning_content(goal_index + 1, language)
+        if not learning_content:
+            warning_msg = "Could not load learning material for learning goal {}. Using fallback question." if language == "English" else "Konnte Lernmaterial für Lernziel {} nicht laden. Verwende Fallback-Frage."
+            st.warning(warning_msg.format(goal_index + 1))
+            return self._get_fallback_question(learning_goal, language)
+        
+        # Get available images list for the LLM
+        available_images = QuizPrompts.get_available_images_list()
+        
+        # Create adaptive prompt with additional constraints
+        adaptive_instructions = self._create_adaptive_instructions(
+            difficulty_level, asked_questions, subjects_covered, language
+        )
+        
+        # Create prompt based on question type and actual content using centralized prompts
+        base_prompt = QuizPrompts.get_content_based_prompt(
+            goal_description=learning_goal.get("description", ""),
+            learning_content=learning_content,
+            question_type="multiple_choice",  # Only multiple choice for now
+            language=language,
+            available_images=available_images
+        )
+        
+        # Add adaptive instructions to the prompt
+        full_prompt = f"{base_prompt}\n\n{adaptive_instructions}"
+        
+        try:
+            response = self.openai_client.chat.completions.create(
+                model=self.quiz_model,
+                messages=[
+                    {"role": "system", "content": QuizPrompts.get_system_prompt("question_generation", language)},
+                    {"role": "user", "content": full_prompt}
+                ],
+                max_tokens=self.max_tokens,
+                temperature=self.temperature
+            )
+            
+            # Parse the response
+            question_data = json.loads(response.choices[0].message.content)
+            question_data["question_type"] = "multiple_choice"
+            question_data["generated_at"] = datetime.now().isoformat()
+            question_data["based_on_content"] = True
+            question_data["language"] = language
+            question_data["difficulty_level"] = difficulty_level
+            question_data["adaptive"] = True
+            
+            return question_data
+            
+        except Exception as e:
+            error_msg = f"Error generating adaptive question: {str(e)}" if language == "English" else f"Fehler beim Generieren der adaptiven Frage: {str(e)}"
+            st.error(error_msg)
+            return self._get_fallback_question(learning_goal, language)
+    
+    def _create_adaptive_instructions(self, difficulty_level: str, asked_questions: list, 
+                                    subjects_covered: list, language: str) -> str:
+        """Create additional instructions for adaptive question generation."""
+        instructions = []
+        
+        if language == "English":
+            instructions.append("ADAPTIVE REQUIREMENTS:")
+            
+            # Difficulty level instructions
+            if difficulty_level == "medium":
+                instructions.append("- Generate a MEDIUM difficulty question")
+                instructions.append("- Focus on clear identification and basic understanding")
+            elif difficulty_level == "hard":
+                instructions.append("- Generate a HARD difficulty question")
+                instructions.append("- Include more complex scenarios or edge cases")
+            
+            # Subject variation instructions
+            if subjects_covered:
+                covered_str = ", ".join(subjects_covered)
+                instructions.append(f"- Try to focus on subjects NOT yet covered: {covered_str}")
+                instructions.append("- Vary the component or aspect being tested")
+            
+            # Repetition avoidance
+            if asked_questions:
+                instructions.append(f"- Avoid repeating similar questions (already asked {len(asked_questions)} questions)")
+                instructions.append("- Use different wording, examples, or focus areas")
+        
+        else:  # German
+            instructions.append("ADAPTIVE ANFORDERUNGEN:")
+            
+            # Difficulty level instructions
+            if difficulty_level == "medium":
+                instructions.append("- Generiere eine MITTLERE Schwierigkeitsfrage")
+                instructions.append("- Fokus auf klare Identifikation und Grundverständnis")
+            elif difficulty_level == "hard":
+                instructions.append("- Generiere eine SCHWERE Schwierigkeitsfrage")
+                instructions.append("- Verwende komplexere Szenarien oder Grenzfälle")
+            
+            # Subject variation instructions
+            if subjects_covered:
+                covered_str = ", ".join(subjects_covered)
+                instructions.append(f"- Versuche, Themen zu fokussieren, die NOCH NICHT behandelt wurden: {covered_str}")
+                instructions.append("- Variiere die Komponente oder den Aspekt, der getestet wird")
+            
+            # Repetition avoidance
+            if asked_questions:
+                instructions.append(f"- Vermeide ähnliche Fragen zu wiederholen (bereits {len(asked_questions)} Fragen gestellt)")
+                instructions.append("- Verwende andere Formulierungen, Beispiele oder Schwerpunkte")
+        
+        return "\n".join(instructions)
+    
     def _create_question_prompt(self, learning_goal: dict, question_type: str) -> str:
         """Create a prompt for generating quiz questions (legacy method)."""
         goal_description = learning_goal.get("description", "")

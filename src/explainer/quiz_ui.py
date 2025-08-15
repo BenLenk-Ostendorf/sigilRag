@@ -32,10 +32,24 @@ class QuizUI:
                 "answered": False,
                 "feedback": None,
                 "attempts": 0,
-                "correct_answers": 0
+                "correct_answers": 0,
+                # Adaptive quiz system state
+                "asked_questions": [],  # Track all asked questions to avoid repetition
+                "difficulty_level": "medium",  # Current difficulty level
+                "medium_questions_asked": 0,  # Count of medium difficulty questions
+                "medium_questions_correct": 0,  # Count of correct medium questions
+                "advancement_phase": "initial",  # initial, second_round, ready_to_advance, recommend_training
+                "question_subjects": [],  # Track subjects/topics covered
+                "can_retry": False,  # Whether current question can be retried
+                "session_complete": False  # Whether this quiz session is complete
             }
         
         quiz_state = st.session_state[quiz_key]
+        
+        # Check if quiz session is complete
+        if quiz_state["session_complete"]:
+            self._render_advancement_decision(quiz_state, quiz_key, goal_index)
+            return
         
         # Generate new question if needed
         if quiz_state["current_question"] is None or not quiz_state["answered"]:
@@ -44,7 +58,10 @@ class QuizUI:
                 language = st.session_state.get("selected_language", "German")
                 spinner_text = "Generating question based on learning material..." if language == "English" else "Generiere Frage basierend auf Lernmaterial..."
                 with st.spinner(spinner_text):
-                    quiz_state["current_question"] = self.quiz_system.generate_quiz_question(learning_goal, goal_index=goal_index, language=language)
+                    # Generate adaptive question based on current state
+                    quiz_state["current_question"] = self._generate_adaptive_question(
+                        learning_goal, goal_index, quiz_state, language
+                    )
         
         # Display current question
         if quiz_state["current_question"]:
@@ -106,10 +123,29 @@ class QuizUI:
             key=answer_key
         )
         
-        # Submit button
-        submit_text = "Submit Answer" if language == "English" else "Antwort einreichen"
-        if st.button(submit_text, key=f"{quiz_key}_submit"):
-            self._submit_answer(quiz_key, selected_option)
+        # Submit button with retry logic
+        quiz_state = st.session_state[quiz_key]
+        is_answered = quiz_state.get("answered", False)
+        can_retry = quiz_state.get("can_retry", True)
+        
+        if is_answered and not can_retry:
+            # Question was answered correctly, no retry allowed
+            disabled_text = "Answer submitted (correct)" if language == "English" else "Antwort eingereicht (richtig)"
+            st.button(disabled_text, key=f"{quiz_key}_submit", disabled=True)
+        else:
+            # First attempt or incorrect answer (retry allowed)
+            submit_text = "Submit Answer" if language == "English" else "Antwort einreichen"
+            if not is_answered:
+                submit_text = "Submit Answer" if language == "English" else "Antwort einreichen"
+            else:
+                submit_text = "Try Again" if language == "English" else "Nochmal versuchen"
+            
+            if st.button(submit_text, key=f"{quiz_key}_submit"):
+                # Reset answered state for retry
+                if is_answered:
+                    quiz_state["answered"] = False
+                    quiz_state["feedback"] = None
+                self._submit_answer(quiz_key, selected_option)
     
 
     
@@ -312,8 +348,130 @@ class QuizUI:
         
         return descriptions.get(component_type, {}).get(filename, f"{component_type} component")
     
+    def _generate_adaptive_question(self, learning_goal: dict, goal_index: int, quiz_state: dict, language: str):
+        """Generate an adaptive question based on current quiz state and progress."""
+        # Determine what type of question to generate based on current state
+        difficulty = quiz_state["difficulty_level"]
+        asked_questions = quiz_state["asked_questions"]
+        subjects_covered = quiz_state["question_subjects"]
+        
+        # Generate question with adaptive parameters
+        question_data = self.quiz_system.generate_adaptive_quiz_question(
+            learning_goal=learning_goal,
+            goal_index=goal_index,
+            difficulty_level=difficulty,
+            asked_questions=asked_questions,
+            subjects_covered=subjects_covered,
+            language=language
+        )
+        
+        # Track this question
+        if question_data:
+            question_hash = self._get_question_hash(question_data)
+            quiz_state["asked_questions"].append(question_hash)
+            
+            # Extract and track subject/topic
+            subject = self._extract_question_subject(question_data)
+            if subject and subject not in quiz_state["question_subjects"]:
+                quiz_state["question_subjects"].append(subject)
+        
+        return question_data
+    
+    def _get_question_hash(self, question_data: dict) -> str:
+        """Generate a hash for a question to track uniqueness."""
+        import hashlib
+        question_text = question_data.get("question", "")
+        options = str(question_data.get("options", []))
+        combined = question_text + options
+        return hashlib.md5(combined.encode()).hexdigest()[:8]
+    
+    def _extract_question_subject(self, question_data: dict) -> str:
+        """Extract the main subject/topic from a question."""
+        question_text = question_data.get("question", "").lower()
+        
+        # Define subject keywords for seal components
+        subjects = {
+            "population_frame": ["population", "bevölkerung", "frame", "rahmen", "einwohner"],
+            "capital_crown": ["capital", "hauptstadt", "crown", "krone", "federal", "bundes"],
+            "location_circle": ["location", "lage", "circle", "kreis", "orientation", "orientierung"],
+            "state_background": ["state", "bundesland", "background", "hintergrund", "color", "farbe"]
+        }
+        
+        for subject, keywords in subjects.items():
+            if any(keyword in question_text for keyword in keywords):
+                return subject
+        
+        return "general"
+    
+    def _render_advancement_decision(self, quiz_state: dict, quiz_key: str, goal_index: int):
+        """Render the advancement decision interface based on quiz performance."""
+        language = st.session_state.get("selected_language", "German")
+        
+        medium_correct = quiz_state["medium_questions_correct"]
+        medium_asked = quiz_state["medium_questions_asked"]
+        phase = quiz_state["advancement_phase"]
+        
+        if language == "English":
+            st.markdown("### 🎯 Quiz Session Complete")
+            
+            if phase == "ready_to_advance":
+                st.success(f"🎉 Excellent! You answered {medium_correct}/{medium_asked} questions correctly!")
+                st.markdown("You have demonstrated good understanding of this learning goal.")
+                if st.button("Continue to Next Learning Goal", key=f"{quiz_key}_advance"):
+                    self._advance_to_next_goal(goal_index)
+            
+            elif phase == "recommend_training":
+                st.warning(f"You answered {medium_correct}/{medium_asked} questions correctly.")
+                st.markdown("We recommend reviewing the learning material before advancing.")
+                
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button("Review Learning Material", key=f"{quiz_key}_review"):
+                        st.session_state.learning_phase = "information"
+                        st.rerun()
+                with col2:
+                    if st.button("Continue Anyway", key=f"{quiz_key}_continue"):
+                        self._advance_to_next_goal(goal_index)
+        
+        else:  # German
+            st.markdown("### 🎯 Quiz-Sitzung Abgeschlossen")
+            
+            if phase == "ready_to_advance":
+                st.success(f"🎉 Ausgezeichnet! Sie haben {medium_correct}/{medium_asked} Fragen richtig beantwortet!")
+                st.markdown("Sie haben ein gutes Verständnis für dieses Lernziel gezeigt.")
+                if st.button("Weiter zum nächsten Lernziel", key=f"{quiz_key}_advance"):
+                    self._advance_to_next_goal(goal_index)
+            
+            elif phase == "recommend_training":
+                st.warning(f"Sie haben {medium_correct}/{medium_asked} Fragen richtig beantwortet.")
+                st.markdown("Wir empfehlen, das Lernmaterial zu wiederholen, bevor Sie fortfahren.")
+                
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button("Lernmaterial wiederholen", key=f"{quiz_key}_review"):
+                        st.session_state.learning_phase = "information"
+                        st.rerun()
+                with col2:
+                    if st.button("Trotzdem fortfahren", key=f"{quiz_key}_continue"):
+                        self._advance_to_next_goal(goal_index)
+    
+    def _advance_to_next_goal(self, current_goal_index: int):
+        """Advance to the next learning goal."""
+        goals = self.quiz_system.learning_goals_manager.get_learning_goals() if hasattr(self.quiz_system, 'learning_goals_manager') else []
+        
+        if current_goal_index + 1 < len(goals):
+            st.session_state.current_goal_index += 1
+            st.session_state.learning_phase = "information"
+        else:
+            st.session_state.page_mode = "checklist"
+            language = st.session_state.get("selected_language", "German")
+            success_text = "🎉 Congratulations! You have completed all learning goals!" if language == "English" else "🎉 Herzlichen Glückwunsch! Sie haben alle Lernziele durchlaufen!"
+            st.success(success_text)
+        
+        st.rerun()
+    
     def _submit_answer(self, quiz_key: str, user_answer: Any):
-        """Submit and evaluate an answer."""
+        """Submit and evaluate an answer with adaptive quiz logic."""
         language = st.session_state.get("selected_language", "German")
         quiz_state = st.session_state[quiz_key]
         question_data = quiz_state["current_question"]
@@ -333,11 +491,51 @@ class QuizUI:
         quiz_state["feedback"] = feedback
         quiz_state["attempts"] += 1
         
-        if feedback.get("is_correct", False):
+        is_correct = feedback.get("is_correct", False)
+        if is_correct:
             quiz_state["correct_answers"] += 1
+        
+        # Update adaptive quiz tracking
+        if quiz_state["difficulty_level"] == "medium":
+            quiz_state["medium_questions_asked"] += 1
+            if is_correct:
+                quiz_state["medium_questions_correct"] += 1
+        
+        # Set retry permission (only for incorrect answers)
+        quiz_state["can_retry"] = not is_correct
+        
+        # Check advancement logic after answering
+        self._check_advancement_logic(quiz_state)
         
         # Rerun to show feedback
         st.rerun()
+    
+    def _check_advancement_logic(self, quiz_state: dict):
+        """Check if user should advance based on performance."""
+        medium_asked = quiz_state["medium_questions_asked"]
+        medium_correct = quiz_state["medium_questions_correct"]
+        phase = quiz_state["advancement_phase"]
+        
+        # Initial phase: First 3 medium questions
+        if phase == "initial" and medium_asked >= 3:
+            success_rate = medium_correct / medium_asked
+            if success_rate >= 0.66:  # 66% or more correct
+                quiz_state["advancement_phase"] = "ready_to_advance"
+                quiz_state["session_complete"] = True
+            else:
+                # Reset for second round
+                quiz_state["advancement_phase"] = "second_round"
+                quiz_state["medium_questions_asked"] = 0
+                quiz_state["medium_questions_correct"] = 0
+        
+        # Second round: Another 3 medium questions
+        elif phase == "second_round" and medium_asked >= 3:
+            success_rate = medium_correct / medium_asked
+            if success_rate >= 0.66:  # 66% or more correct in second round
+                quiz_state["advancement_phase"] = "ready_to_advance"
+            else:
+                quiz_state["advancement_phase"] = "recommend_training"
+            quiz_state["session_complete"] = True
     
     def _render_feedback(self, feedback: Dict[str, Any]):
         """Render feedback for an answer."""
