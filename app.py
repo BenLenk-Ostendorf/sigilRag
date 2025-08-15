@@ -147,16 +147,32 @@ def main():
         else:
             # Regular users only see chat
             page = "💬 Chat"
-            st.info("💬 Chat-Modus")
+            if page == "explAIner":
+                language = st.session_state.get("selected_language", "German")
+                if language == "English":
+                    st.info("💬 Chat Mode")
+                else:
+                    st.info("💬 Chat-Modus")
         
         # System status
         if rag_system:
-            st.success("✅ RAG System bereit")
+            language = st.session_state.get("selected_language", "German")
+            if language == "English":
+                st.success("✅ RAG System Ready")
+            else:
+                st.success("✅ RAG System bereit")
             vector_info = rag_system.get_vector_store_info()
             if vector_info["exists"]:
-                st.info(f"📚 {vector_info.get('num_chunks', 0)} Dokument-Chunks")
+                if language == "English":
+                    st.info(f"📚 {vector_info.get('num_chunks', 0)} Document Chunks")
+                else:
+                    st.info(f"📚 {vector_info.get('num_chunks', 0)} Dokument-Chunks")
         else:
-            st.error("❌ RAG System nicht verfügbar")
+            language = st.session_state.get("selected_language", "German")
+            if language == "English":
+                st.error("❌ RAG System not available")
+            else:
+                st.error("❌ RAG System nicht verfügbar")
         
         st.divider()
         
@@ -431,13 +447,22 @@ def render_explainer_page():
     user_group = auth.get_group()
     
     if not user_id:
-        st.error("❌ Benutzer nicht authentifiziert")
+        language = st.session_state.get("selected_language", "German")
+        if language == "English":
+            st.error("❌ User not authenticated")
+        else:
+            st.error("❌ Benutzer nicht authentifiziert")
         return
     
     # Render the explAIner UI
     explainer_ui.render_main_page(user_id, user_group)
     
-    st.success("📧 Für Updates und Beta-Zugang: ben.lenkostendorf@tum.de")
+    # Multilingual contact info
+    language = st.session_state.get("selected_language", "German")
+    if language == "English":
+        st.success("📧 For updates and beta access: ben.lenkostendorf@tum.de")
+    else:
+        st.success("📧 Für Updates und Beta-Zugang: ben.lenkostendorf@tum.de")
 
 if __name__ == "__main__":
     main()

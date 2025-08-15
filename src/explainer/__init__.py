@@ -9,5 +9,6 @@ from .explainer_logger import ExplainerLogger
 from .learning_goals_manager import LearningGoalsManager
 from .quiz_system import QuizSystem
 from .quiz_ui import QuizUI
+from .prompts_config import QuizPrompts, FormalTestPrompts, PROMPT_CONFIG
 
-__all__ = ['ExplainerCore', 'ExplainerUI', 'ExplainerLogger', 'LearningGoalsManager', 'QuizSystem', 'QuizUI']
+__all__ = ['ExplainerCore', 'ExplainerUI', 'ExplainerLogger', 'LearningGoalsManager', 'QuizSystem', 'QuizUI', 'QuizPrompts', 'FormalTestPrompts', 'PROMPT_CONFIG']

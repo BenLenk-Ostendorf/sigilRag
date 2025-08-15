@@ -10,6 +10,7 @@ from .explainer_logger import ExplainerLogger
 from .learning_goals_manager import LearningGoalsManager
 from .quiz_system import QuizSystem
 from .quiz_ui import QuizUI
+from .prompts_config import LANGUAGE_CONFIG, PROMPT_CONFIG
 
 class ExplainerUI:
     """User interface handler for the explAIner system."""
@@ -24,6 +25,9 @@ class ExplainerUI:
         
     def render_main_page(self, user_id: str, user_group: int):
         """Render the explAIner page - either checklist or learning flow."""
+        # Render language selector at the top
+        self._render_language_selector()
+        
         # Check which page mode we're in
         page_mode = st.session_state.get("page_mode", "checklist")
         
@@ -34,16 +38,27 @@ class ExplainerUI:
     
     def _render_checklist_page(self, user_id: str):
         """Render the main checklist page with learning goals."""
+        language = st.session_state.get("selected_language", PROMPT_CONFIG["default_language"])
+        
         st.title("📚 Learning to Sigil")
         
-        # Motivational intro text
-        st.markdown("""
-        ### Das sind die Lernziele, die Sie für die Abschlussprüfung benötigen.
-        
-        🎯 **Um erfolgreich voranzukommen, müssen Sie alle Lernziele erreichen.**
-        
-        Markieren Sie jedes Lernziel als erreicht, sobald Sie es beherrschen:
-        """)
+        # Motivational intro text (multilingual)
+        if language == "English":
+            st.markdown("""
+            ### These are the learning objectives you need for the final exam.
+            
+            🎯 **To successfully progress, you must achieve all learning objectives.**
+            
+            Mark each learning objective as completed once you have mastered it:
+            """)
+        else:
+            st.markdown("""
+            ### Das sind die Lernziele, die Sie für die Abschlussprüfung benötigen.
+            
+            🎯 **Um erfolgreich voranzukommen, müssen Sie alle Lernziele erreichen.**
+            
+            Markieren Sie jedes Lernziel als erreicht, sobald Sie es beherrschen:
+            """)
         
         # Display learning goals checklist
         self._render_learning_goals_checklist(user_id)
@@ -52,10 +67,13 @@ class ExplainerUI:
         st.markdown("---")
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
+            button_text = "🚀 Start Learning Experience" if language == "English" else "🚀 Lernerfahrung starten"
+            button_help = "Begin your structured learning journey through all learning objectives" if language == "English" else "Beginnen Sie Ihre strukturierte Lernreise durch alle Lernziele"
+            
             if st.button(
-                "🚀 Lernerfahrung starten", 
+                button_text, 
                 key="start_learning_experience",
-                help="Beginnen Sie Ihre strukturierte Lernreise durch alle Lernziele",
+                help=button_help,
                 use_container_width=True
             ):
                 st.session_state.page_mode = "learning_flow"
@@ -89,14 +107,17 @@ class ExplainerUI:
         current_goal = goals[current_goal_index]
         
         # Header with back button
+        language = st.session_state.get("selected_language", PROMPT_CONFIG["default_language"])
         col1, col2 = st.columns([1, 6])
         with col1:
-            if st.button("← Zurück", key="back_to_checklist"):
+            back_text = "← Back" if language == "English" else "← Zurück"
+            if st.button(back_text, key="back_to_checklist"):
                 st.session_state.page_mode = "checklist"
                 st.rerun()
         
         with col2:
-            st.title(f"🎯 Lernziel {current_goal_index + 1}: {current_goal['description'][:50]}...")
+            title_text = f"🎯 Learning Goal {current_goal_index + 1}: {current_goal['description'][:50]}..." if language == "English" else f"🎯 Lernziel {current_goal_index + 1}: {current_goal['description'][:50]}..."
+            st.title(title_text)
         
         # Stepper UI
         self._render_stepper(learning_phase)
@@ -111,11 +132,20 @@ class ExplainerUI:
     
     def _render_stepper(self, current_phase: str):
         """Render the stepper UI showing the learning phases."""
-        phases = [
-            ("information", "📚 Verstehen"),
-            ("train", "🏋️ Training"),
-            ("test", "📋 Test")
-        ]
+        language = st.session_state.get("selected_language", PROMPT_CONFIG["default_language"])
+        
+        if language == "English":
+            phases = [
+                ("information", "📚 Understand"),
+                ("train", "🏋️ Training"),
+                ("test", "📋 Test")
+            ]
+        else:
+            phases = [
+                ("information", "📚 Verstehen"),
+                ("train", "🏋️ Training"),
+                ("test", "📋 Test")
+            ]
         
         # Create stepper visualization
         cols = st.columns(len(phases))
@@ -152,35 +182,101 @@ class ExplainerUI:
         
         st.markdown("---")
     
+    def _render_language_selector(self):
+        """Render language selector in the sidebar with professional flag images from Flags API."""
+        with st.sidebar:
+            st.markdown("### 🌐 Language Selection")
+            
+            # Initialize selected language if not set
+            if "selected_language" not in st.session_state:
+                st.session_state.selected_language = PROMPT_CONFIG["default_language"]
+            
+            # Language selector with flag images from Flags API
+            current_language = st.session_state.selected_language
+            language_options = list(LANGUAGE_CONFIG.keys())
+            
+            # Create large flag display for current selection
+            current_config = LANGUAGE_CONFIG[current_language]
+            flag_url = f"https://flagsapi.com/{current_config['country_code']}/flat/64.png"
+            
+            st.markdown(f"""
+            <div style="text-align: center; padding: 15px; background-color: #f0f2f6; border-radius: 10px; margin-bottom: 15px;">
+                <img src="{flag_url}" alt="{current_config['name']} flag" style="width: 64px; height: auto; margin-bottom: 10px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-weight: bold; font-size: 1.2em; margin-bottom: 5px;">{current_config['name']}</div>
+                <div style="color: #666; font-size: 0.9em;">Selected Language</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Language selection with flag images
+            st.markdown("**Choose Language:**")
+            
+            # Create clickable language options with flag images
+            for lang in language_options:
+                config = LANGUAGE_CONFIG[lang]
+                is_selected = lang == current_language
+                flag_url = f"https://flagsapi.com/{config['country_code']}/flat/32.png"
+                
+                # Create clickable language option with flag image
+                col1, col2 = st.columns([1, 4])
+                with col1:
+                    st.markdown(f"""
+                    <div style='text-align: center; padding: 5px;'>
+                        <img src="{flag_url}" alt="{config['name']} flag" style="width: 32px; height: auto; border-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                    </div>
+                    """, unsafe_allow_html=True)
+                with col2:
+                    button_style = "✓ " if is_selected else ""
+                    if st.button(
+                        f"{button_style}{config['name']}",
+                        key=f"lang_btn_{lang}",
+                        disabled=is_selected,
+                        use_container_width=True,
+                        type="primary" if is_selected else "secondary"
+                    ):
+                        st.session_state.selected_language = lang
+                        st.rerun()
+            
+            st.markdown("---")
+    
     def _render_information_phase(self, current_goal: dict, goal_index: int):
         """Render the information gathering phase."""
-        st.markdown(f"### 📚 Informationen für Lernziel {goal_index + 1}")
+        language = st.session_state.get("selected_language", PROMPT_CONFIG["default_language"])
+        
+        title_text = f"### 📚 Information for Learning Goal {goal_index + 1}" if language == "English" else f"### 📚 Informationen für Lernziel {goal_index + 1}"
+        st.markdown(title_text)
         
         # Load and display goal-specific information
-        info_content = self._load_goal_information(goal_index + 1)
+        info_content = self._load_goal_information(goal_index + 1, language)
         
         if info_content:
             st.markdown(info_content)
         else:
-            st.warning("⚠️ Informationen für dieses Lernziel konnten nicht geladen werden.")
+            warning_text = "⚠️ Information for this learning goal could not be loaded." if language == "English" else "⚠️ Informationen für dieses Lernziel konnten nicht geladen werden."
+            st.warning(warning_text)
         
         # Navigation buttons
         st.markdown("---")
         col1, col2, col3 = st.columns([1, 1, 1])
         
         with col2:
-            if st.button("➡️ Weiter zum Training", key="to_training", use_container_width=True):
+            button_text = "➡️ Continue to Training" if language == "English" else "➡️ Weiter zum Training"
+            if st.button(button_text, key="to_training", use_container_width=True):
                 st.session_state.learning_phase = "train"
                 st.rerun()
     
     def _render_training_phase(self, current_goal: dict, goal_index: int):
         """Render the training phase with interactive quiz for practice."""
+        language = st.session_state.get("selected_language", PROMPT_CONFIG["default_language"])
+        
         # Get user ID from session state or generate one
         user_id = st.session_state.get("user_id", "anonymous")
         
         # Add training context
-        st.markdown(f"### 🏋️ Training für Lernziel {goal_index + 1}")
-        st.info("💡 **Trainingsmodus:** Hier können Sie üben und erhalten sofortiges Feedback. Nutzen Sie diese Phase, um Ihr Verständnis zu vertiefen!")
+        title_text = f"### 🏋️ Training for Learning Goal {goal_index + 1}" if language == "English" else f"### 🏋️ Training für Lernziel {goal_index + 1}"
+        st.markdown(title_text)
+        
+        info_text = "💡 **Training Mode:** Here you can practice and receive immediate feedback. Use this phase to deepen your understanding!" if language == "English" else "💡 **Trainingsmodus:** Hier können Sie üben und erhalten sofortiges Feedback. Nutzen Sie diese Phase, um Ihr Verständnis zu vertiefen!"
+        st.info(info_text)
         
         # Render the quiz interface for training
         self.quiz_ui.render_quiz_interface(current_goal, goal_index, user_id)
@@ -190,65 +286,100 @@ class ExplainerUI:
         col1, col2, col3 = st.columns([1, 1, 1])
         
         with col1:
-            if st.button("← Zurück zu Informationen", key="back_to_info_from_training", use_container_width=True):
+            back_text = "← Back to Information" if language == "English" else "← Zurück zu Informationen"
+            if st.button(back_text, key="back_to_info_from_training", use_container_width=True):
                 st.session_state.learning_phase = "information"
                 st.rerun()
         
         with col3:
-            if st.button("➡️ Weiter zum Test", key="to_test", use_container_width=True):
+            next_text = "➡️ Continue to Test" if language == "English" else "➡️ Weiter zum Test"
+            if st.button(next_text, key="to_test", use_container_width=True):
                 st.session_state.learning_phase = "test"
                 st.rerun()
     
     def _render_test_phase(self, current_goal: dict, goal_index: int):
         """Render the test phase for formal assessment."""
-        st.markdown(f"### 📋 Test für Lernziel {goal_index + 1}")
-        st.warning("⚠️ **Testmodus:** Dies ist eine formale Bewertung. Sie haben begrenzte Versuche und erhalten erst am Ende Feedback.")
+        language = st.session_state.get("selected_language", PROMPT_CONFIG["default_language"])
+        
+        title_text = f"### 📋 Test for Learning Goal {goal_index + 1}" if language == "English" else f"### 📋 Test für Lernziel {goal_index + 1}"
+        st.markdown(title_text)
+        
+        warning_text = "⚠️ **Test Mode:** This is a formal assessment. You have limited attempts and receive feedback only at the end." if language == "English" else "⚠️ **Testmodus:** Dies ist eine formale Bewertung. Sie haben begrenzte Versuche und erhalten erst am Ende Feedback."
+        st.warning(warning_text)
         
         # TODO: Implement formal test logic
-        st.info("🚧 Formaler Testbereich wird in einer zukünftigen Version implementiert.")
-        st.markdown("""
-        **Geplante Test-Features:**
-        - Begrenzte Anzahl von Versuchen
-        - Zeitlimit pro Frage
-        - Feedback erst nach Abschluss aller Fragen
-        - Bewertung und Zertifizierung
-        - Fortschritt wird gespeichert
-        """)
+        info_text = "🚧 Formal test area will be implemented in a future version." if language == "English" else "🚧 Formaler Testbereich wird in einer zukünftigen Version implementiert."
+        st.info(info_text)
+        
+        if language == "English":
+            st.markdown("""
+            **Planned Test Features:**
+            - Limited number of attempts
+            - Time limit per question
+            - Feedback only after completing all questions
+            - Evaluation and certification
+            - Progress is saved
+            """)
+        else:
+            st.markdown("""
+            **Geplante Test-Features:**
+            - Begrenzte Anzahl von Versuchen
+            - Zeitlimit pro Frage
+            - Feedback erst nach Abschluss aller Fragen
+            - Bewertung und Zertifizierung
+            - Fortschritt wird gespeichert
+            """)
         
         # Navigation buttons
         st.markdown("---")
         col1, col2, col3 = st.columns([1, 1, 1])
         
         with col1:
-            if st.button("← Zurück zum Training", key="back_to_training", use_container_width=True):
+            back_text = "← Back to Training" if language == "English" else "← Zurück zum Training"
+            if st.button(back_text, key="back_to_training", use_container_width=True):
                 st.session_state.learning_phase = "train"
                 st.rerun()
         
         with col3:
             goals = self.learning_goals_manager.get_learning_goals()
             if goal_index + 1 < len(goals):
-                if st.button("➡️ Nächstes Lernziel", key="next_goal", use_container_width=True):
+                next_goal_text = "➡️ Next Learning Goal" if language == "English" else "➡️ Nächstes Lernziel"
+                if st.button(next_goal_text, key="next_goal", use_container_width=True):
                     st.session_state.current_goal_index += 1
                     st.session_state.learning_phase = "information"
                     st.rerun()
             else:
-                if st.button("🎉 Abschließen", key="complete_learning", use_container_width=True):
+                complete_text = "🎉 Complete" if language == "English" else "🎉 Abschließen"
+                if st.button(complete_text, key="complete_learning", use_container_width=True):
                     st.session_state.page_mode = "checklist"
-                    st.success("🎉 Herzlichen Glückwunsch! Sie haben alle Lernziele durchlaufen!")
+                    success_text = "🎉 Congratulations! You have completed all learning goals!" if language == "English" else "🎉 Herzlichen Glückwunsch! Sie haben alle Lernziele durchlaufen!"
+                    st.success(success_text)
                     st.rerun()
     
-    def _load_goal_information(self, goal_number: int) -> str:
-        """Load goal-specific information from markdown files."""
+    def _load_goal_information(self, goal_number: int, language: str = None) -> str:
+        """Load goal-specific information from markdown files in the selected language."""
         import os
         
-        # Map goal numbers to file names
-        goal_files = {
-            1: "goal_1_components.md",
-            2: "goal_2_functions.md", 
-            3: "goal_3_assembly.md",
-            4: "goal_4_analysis.md",
-            5: "goal_5_evaluation.md"
-        }
+        if not language:
+            language = st.session_state.get("selected_language", PROMPT_CONFIG["default_language"])
+        
+        # Map goal numbers to file names (with language suffix for English)
+        if language == "English":
+            goal_files = {
+                1: "goal_1_components_en.md",
+                2: "goal_2_functions_en.md", 
+                3: "goal_3_assembly_en.md",
+                4: "goal_4_analysis_en.md",
+                5: "goal_5_evaluation_en.md"
+            }
+        else:
+            goal_files = {
+                1: "goal_1_components.md",
+                2: "goal_2_functions.md", 
+                3: "goal_3_assembly.md",
+                4: "goal_4_analysis.md",
+                5: "goal_5_evaluation.md"
+            }
         
         if goal_number not in goal_files:
             return None
@@ -263,9 +394,19 @@ class ExplainerUI:
                 with open(info_file_path, 'r', encoding='utf-8') as f:
                     return f.read()
             else:
-                return f"⚠️ Informationsdatei nicht gefunden: {info_file_path}"
+                # Fallback to German version if English doesn't exist
+                if language == "English":
+                    fallback_file = goal_files[goal_number].replace("_en.md", ".md")
+                    fallback_path = os.path.join(project_root, "data", "information", fallback_file)
+                    if os.path.exists(fallback_path):
+                        with open(fallback_path, 'r', encoding='utf-8') as f:
+                            return f.read()
+                
+                error_text = f"⚠️ Information file not found: {info_file_path}" if language == "English" else f"⚠️ Informationsdatei nicht gefunden: {info_file_path}"
+                return error_text
         except Exception as e:
-            return f"❌ Fehler beim Laden der Informationen: {str(e)}"
+            error_text = f"❌ Error loading information: {str(e)}" if language == "English" else f"❌ Fehler beim Laden der Informationen: {str(e)}"
+            return error_text
     
     def _render_learning_goals_checklist(self, user_id: str):
         """Render the learning goals as an interactive checklist."""
@@ -293,7 +434,7 @@ class ExplainerUI:
             with col1:
                 # Checkbox
                 new_status = st.checkbox(
-                    "", 
+                    f"Mark learning goal {goal_id} as completed", 
                     value=is_completed,
                     key=f"goal_checkbox_{goal_id}",
                     label_visibility="collapsed"
@@ -319,17 +460,32 @@ class ExplainerUI:
         progress_percentage = (completed_count / total_goals) * 100 if total_goals > 0 else 0
         
         # Progress bar
+        language = st.session_state.get("selected_language", PROMPT_CONFIG["default_language"])
         st.progress(progress_percentage / 100)
-        st.markdown(f"**Fortschritt: {completed_count}/{total_goals} Lernziele erreicht ({progress_percentage:.0f}%)**")
+        
+        if language == "English":
+            st.markdown(f"**Progress: {completed_count}/{total_goals} Learning Goals achieved ({progress_percentage:.0f}%)**")
+        else:
+            st.markdown(f"**Fortschritt: {completed_count}/{total_goals} Lernziele erreicht ({progress_percentage:.0f}%)**")
         
         # Motivational messages based on progress
         if completed_count == 0:
-            st.info("🚀 **Beginnen Sie mit dem ersten Lernziel!** Jeder Schritt bringt Sie näher zum Erfolg.")
+            if language == "English":
+                st.info("🚀 **Start with the first learning goal!** Every step brings you closer to success.")
+            else:
+                st.info("🚀 **Beginnen Sie mit dem ersten Lernziel!** Jeder Schritt bringt Sie näher zum Erfolg.")
         elif completed_count < total_goals:
             remaining = total_goals - completed_count
-            st.info(f"💪 **Großartig! Noch {remaining} Lernziel{'e' if remaining > 1 else ''} bis zum Abschluss!** Sie sind auf dem richtigen Weg.")
+            if language == "English":
+                plural = "s" if remaining > 1 else ""
+                st.info(f"💪 **Great! {remaining} more learning goal{plural} to completion!** You're on the right track.")
+            else:
+                st.info(f"💪 **Großartig! Noch {remaining} Lernziel{'e' if remaining > 1 else ''} bis zum Abschluss!** Sie sind auf dem richtigen Weg.")
         else:
-            st.success("🎉 **Herzlichen Glückwunsch!** Sie haben alle Lernziele erreicht und können zur Prüfung antreten!")
+            if language == "English":
+                st.success("🎉 **Congratulations!** You have achieved all learning goals and can take the exam!")
+            else:
+                st.success("🎉 **Herzlichen Glückwunsch!** Sie haben alle Lernziele erreicht und können zur Prüfung antreten!")
             st.balloons()
         
     def _render_learning_goals_tab(self, user_id: str) -> None:
