@@ -195,21 +195,6 @@ class ExplainerUI:
             current_language = st.session_state.selected_language
             language_options = list(LANGUAGE_CONFIG.keys())
             
-            # Create large flag display for current selection
-            current_config = LANGUAGE_CONFIG[current_language]
-            flag_url = f"https://flagsapi.com/{current_config['country_code']}/flat/64.png"
-            
-            st.markdown(f"""
-            <div style="text-align: center; padding: 15px; background-color: #f0f2f6; border-radius: 10px; margin-bottom: 15px;">
-                <img src="{flag_url}" alt="{current_config['name']} flag" style="width: 64px; height: auto; margin-bottom: 10px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <div style="font-weight: bold; font-size: 1.2em; margin-bottom: 5px;">{current_config['name']}</div>
-                <div style="color: #666; font-size: 0.9em;">Selected Language</div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # Language selection with flag images
-            st.markdown("**Choose Language:**")
-            
             # Create clickable language options with flag images
             for lang in language_options:
                 config = LANGUAGE_CONFIG[lang]
