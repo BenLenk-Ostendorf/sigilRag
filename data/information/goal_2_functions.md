@@ -1,37 +1,59 @@
-# Die Funktion der einzelnen Siegelkomponenten
+# Die einzelnen Komponenten eines Siegels
 
-## Bundeslandshintergrund (State Background) - Regionale Identifikation
-Der Bundeslandshintergrund erfüllt eine wichtige Identifikationsfunktion:
-- **Regionale Zuordnung**: Zeigt sofort, zu welchem Bundesland die Stadt gehört
-- **Farbkodierung**: Verwendet die spezifischen Farben der Landesflagge zur eindeutigen Identifizierung
+Ein Stadtsiegel besteht aus verschiedenen Komponenten, die jeweils eine spezifische Funktion erfüllen:
 
-## Bevölkerungsrahmen (Population Frame) - Größenklassifizierung
-Der Bevölkerungsrahmen hat eine klassifizierende Funktion:
-- **Größenindikator**: Zeigt auf einen Blick die Bevölkerungsklasse der Stadt
-- **Hierarchische Darstellung**: Unterscheidet zwischen Millionenstädten, Großstädten und kleineren Städten
+## 1. Bundeslandshintergrund (State Background)
+Beispiele für Bundeslandshintergründe:
 
-## Hauptstadtkrone (Capital Crown) - Statusanzeige
-Die Hauptstadtkrone dient der Statusidentifikation:
-- **Politische Bedeutung**: Kennzeichnet Haupt- und ehemalige Hauptstädte
-- **Hierarchische Funktion**: Unterscheidet zwischen Bundes- und Landeshauptstädten
-- **Historische Anerkennung**: Besondere Würdigung für Bonn als ehemalige Bundeshauptstadt
+- Bayern (blau-weiß)
+- Berlin (rot-weiß)
+- Baden-Württemberg (schwarz-gelb)
 
-## Orientierungskreis/Lagekreis (Location Circle) - Geografische Positionierung
-Die Lagekreise erfüllen eine Orientierungsfunktion:
-- **Geografische Verortung**: Zeigen die ungefähre Position der Stadt im Bundesland
-- **Räumliche Orientierung**: Helfen bei der geografischen Einordnung
-- **Spezialfall Stadtstaaten**: Vollständig gelber Kreis kennzeichnet Stadtstaaten ohne weitere geografische Unterteilung
+Der Hintergrund des Siegels wird durch das Bundesland der Stadt bestimmt und enthält die Farben der Landesflagge. Beispiel: Bayern ist blau-weiß. Wenn es häufige Farbkombinationen gibt (zum Beispiel rot-weiß) sind die Farben an der jeweiligen Landesflagge orientiert.
 
-## Textelemente - Präzise Identifikation
+## 2. Bevölkerungsrahmen (Population Frame)
+Beispiele für Bevölkerungsrahmen:
+
+- Städte mit weniger als 500.000 Einwohnern (einfarbiger Rand)
+- Städte mit 500.000 bis 1 Million Einwohnern (zweifarbiger Rand mit Erhebungen)
+- Städte mit über 1 Million Einwohnern (zweifarbiger Rand mit grünen Spitzen)
+
+Der Rahmen wird durch die Bevölkerungszahl der Stadt bestimmt:
+
+- Für Städte mit über 1 Million Einwohnern: Zweifarbiger Rand mit grünen Spitzen
+- Für Städte mit 500.000 bis 1 Million Einwohnern: Zweifarbiger Rand mit Erhebungen
+- Für Städte mit weniger als 500.000 Einwohnern: Einfarbiger Rand
+
+## 3. Hauptstadtkrone (Capital Crown)
+Beispiele für Hauptstadtkronen:
+
+- Bundeshauptstädte: Krone mit zwei Unterstrichen in umgekehrten deutschen Flaggenfarben
+- Landeshauptstädte: Krone mit rotem Unterstrich
+- Ehemalige Bundeshauptstadt (Bonn): Ausschließlich die Krone
+
+Die Hauptstadtkrone wird nur für Hauptstädte und Bonn verwendet:
+
+- Für Bundeshauptstädte: Krone mit zwei Unterstrichen in umgekehrten deutschen Flaggenfarben
+- Für Landeshauptstädte: Krone mit rotem Unterstrich
+- Für die ehemalige Bundeshauptstadt: Ausschließlich die Krone
+- Für andere Städte: Keine Hauptstadtkrone
+
+## 4. Orientierungskreis/Lagekreis (Orientation Circle/Location Circle)
+Beispiele für Lagekreise:
+
+- Nördliche Lage
+- Zentrale Lage
+- Stadtstaat (komplett gelb gefüllter Kreis)
+
+Die Lagekreise stellen die ungefähre geografische Lage der Stadt innerhalb des Bundeslandes dar. Der schwarze Kreis ist im Hintergrund, der gelbe Kreis im Vordergrund. Bei Stadtstaaten (wie Berlin) wird der komplett gelb gefüllte Kreis verwendet.
+
+## 5. Textelemente
 
 ### Kurzkennzeichen (Short Registration Plate)
-- **Eindeutige Identifikation**: Macht die Stadt durch das Kfz-Kennzeichen präzise identifizierbar
-- **Praktischer Bezug**: Verbindet das Siegel mit dem alltäglichen Kennzeichensystem
+Auf der linken Seite stehen die Buchstaben des Kfz-Kennzeichens der jeweiligen Stadt zur präzisen Identifizierung.
 
 ### Koordinatenrechteck (Coordinate Rectangle)
-- **Geografische Präzision**: Gibt die exakte Position der Stadt an
-- **Wissenschaftliche Verortung**: Ermöglicht präzise geografische Zuordnung
+Auf der rechten Seite werden die ungefähren Koordinaten der Stadt im Format "LAT|LON" angegeben (z.B. "48|11").
 
 ### Gründungsmittelpunkt (Founding Center)
-- **Historische Information**: Zeigt das Gründungsdatum und die historische Bedeutung der Stadt
-- **Zeitliche Einordnung**: Ermöglicht historische Vergleiche zwischen Städten
+Im Zentrum des Siegels steht das Gründungsjahr der Stadt (verkürzt auf die ersten zwei Ziffern).

@@ -1,154 +1,75 @@
-# Learning Goal 5: Evaluation and Assessment of City Seals
+# Learning Goal 5: Identifying and Correcting Errors in Seals
 
-## How do you evaluate the quality and effectiveness of a city seal?
+## What You Will Learn
 
-Evaluating a city seal requires examining multiple dimensions to determine how well it serves its intended purposes. Here's a comprehensive evaluation framework:
+To achieve the fifth learning goal, you must be able to identify errors in seals and correct them.
 
-### 1. **Design Quality Assessment**
+## Understanding Correct Seal Standards
 
-#### **Visual Excellence**
-- **Aesthetic appeal**: Is the seal visually attractive and professionally designed?
-- **Balance and proportion**: Are all elements harmoniously arranged?
-- **Clarity and readability**: Can all elements be clearly distinguished?
-- **Originality**: Does the design stand out from other municipal seals?
+To identify errors, you must first understand the correct standards for city seals:
 
-#### **Technical Execution**
-- **Line quality**: Are lines clean, precise, and well-executed?
-- **Typography**: Is the text legible and appropriately styled?
-- **Scalability**: Does the seal work well at different sizes?
-- **Reproduction quality**: How well does it reproduce in various media?
+### Correct Component Assignment
 
-### 2. **Functional Effectiveness**
+#### State Background
+- **Correct**: Colors correspond exactly to the state flag
+- **Error**: Wrong colors or wrong color combination for the federal state
 
-#### **Primary Functions**
-- **Authentication**: Does it effectively validate official documents?
-- **Recognition**: Is it easily identifiable as belonging to the specific city?
-- **Legal validity**: Does it meet all legal requirements for official use?
-- **Practical application**: Can it be used efficiently in daily administrative tasks?
+#### Population Frame
+- **Correct**: 
+  - Over 1 million: Two-colored border with green spikes
+  - 500,000-1 million: Two-colored border with elevations
+  - Under 500,000: Single-colored border
+- **Error**: Wrong frame type for the population class
 
-#### **Communication Effectiveness**
-- **Message clarity**: Does it clearly communicate the city's identity?
-- **Target audience**: Does it resonate with intended viewers?
-- **Cultural appropriateness**: Is it suitable for the community it represents?
-- **Timeless quality**: Will it remain relevant over time?
+#### Capital Crown
+- **Correct**:
+  - Federal capital: Crown with two underlines in inverted German flag colors
+  - State capital: Crown with red underline
+  - Former federal capital (Bonn): Crown only
+  - Other cities: No crown
+- **Error**: Wrong crown or crown for non-capital cities
 
-### 3. **Symbolic Appropriateness**
+#### Orientation Circle
+- **Correct**: Yellow circle positioned according to geographic location in the federal state
+- **Error**: Wrong position of yellow circle or not completely yellow for city-states
 
-#### **Representational Accuracy**
-- **Historical accuracy**: Do historical references reflect actual events or facts?
-- **Cultural sensitivity**: Are all cultural elements respectfully represented?
-- **Geographic relevance**: Do symbols accurately reflect the local environment?
-- **Community values**: Does the seal embody the community's core values?
+#### Text Elements
+- **Short Registration Plate**: Must exactly match the official vehicle registration plate
+- **Coordinates**: Format "LAT|LON" with correct values
+- **Founding Year**: Shortened to first two digits of the founding year
 
-#### **Symbol Selection**
-- **Relevance**: Are chosen symbols meaningful to the community?
-- **Uniqueness**: Do symbols distinguish this city from others?
-- **Comprehensibility**: Can viewers understand the symbolic meaning?
-- **Appropriateness**: Are symbols suitable for official municipal use?
+## Common Error Types
 
-### 4. **Historical and Cultural Evaluation**
+### 1. Data Inconsistencies
+- **Example**: Munich with single-colored border (correct would be two-colored with spikes for >1 million inhabitants)
+- **Example**: Frankfurt with capital crown (Frankfurt is not a capital)
+- **Example**: Berlin without federal capital crown
 
-#### **Historical Context**
-- **Period appropriateness**: Does the design reflect its historical creation period?
-- **Evolution tracking**: How has the seal adapted to changing times?
-- **Continuity**: Does it maintain connection with the city's heritage?
-- **Innovation**: Does it incorporate necessary modern elements?
+### 2. Geographic Errors
+- **Example**: Munich with yellow circle in the north (correct: south)
+- **Example**: Hamburg with federal state colors of Bavaria
+- **Example**: Wrong coordinates for the city
 
-#### **Cultural Impact**
-- **Community acceptance**: How do residents respond to the seal?
-- **Pride factor**: Does it generate civic pride and identification?
-- **Educational value**: Does it teach about local history and culture?
-- **Inclusivity**: Does it represent all community members fairly?
+### 3. Text Errors
+- **Example**: "MUC" instead of "M" for Munich
+- **Example**: Complete year "1158" instead of "12" for Munich
+- **Example**: Wrong coordinate specification
 
-### 5. **Comparative Evaluation**
+### 4. Status Errors
+- **Example**: Düsseldorf without state capital crown
+- **Example**: Cologne with capital crown (is not a capital)
+- **Example**: Bonn with state capital crown (two underlines) instead of crown only (one underline)
 
-#### **Peer Comparison**
-- **Regional standards**: How does it compare to other seals in the region?
-- **Best practices**: Does it follow established design principles?
-- **Innovation level**: Is it ahead of or behind current trends?
-- **Quality ranking**: Where does it stand among comparable municipal seals?
+## Systematic Error Checking
 
-#### **Benchmarking Criteria**
-- **Design sophistication**: Level of artistic and technical achievement
-- **Functional efficiency**: Effectiveness in practical applications
-- **Symbolic richness**: Depth and appropriateness of symbolic content
-- **Longevity potential**: Likelihood of remaining relevant over time
+### Step 1: City Identification
+1. Identify city based on visible elements
+2. Extract correct data from reference table
+3. Perform target-actual comparison
 
-### 6. **Modern Relevance Assessment**
-
-#### **Contemporary Needs**
-- **Digital compatibility**: How well does it work in digital environments?
-- **Social media presence**: Is it effective on digital platforms?
-- **Accessibility**: Can it be perceived by people with various abilities?
-- **Global context**: Is it appropriate for international representation?
-
-#### **Future Adaptability**
-- **Flexibility**: Can it adapt to future communication needs?
-- **Sustainability**: Will it remain relevant as the city evolves?
-- **Modification potential**: Can it be updated without losing core identity?
-- **Technology integration**: How well does it work with new technologies?
-
-### 7. **Stakeholder Evaluation**
-
-#### **Multiple Perspectives**
-- **Citizens**: How do residents view and relate to the seal?
-- **Officials**: Do city administrators find it effective for their needs?
-- **Visitors**: Is it meaningful and recognizable to outsiders?
-- **Experts**: What do design and heraldic professionals think?
-
-#### **Feedback Collection**
-- **Surveys and polls**: Systematic gathering of public opinion
-- **Focus groups**: In-depth discussions with representative groups
-- **Expert reviews**: Professional assessments from specialists
-- **Usage analysis**: Study of how the seal is actually used
-
-### 8. **Evaluation Methodology**
-
-#### **Assessment Framework**
-1. **Criteria establishment**: Define specific evaluation standards
-2. **Data collection**: Gather information from multiple sources
-3. **Analysis**: Systematically examine all aspects
-4. **Scoring**: Rate performance in each evaluation category
-5. **Synthesis**: Combine findings into overall assessment
-6. **Recommendations**: Suggest improvements or changes if needed
-
-#### **Evaluation Tools**
-- **Checklists**: Systematic review of required elements
-- **Rating scales**: Numerical assessment of quality factors
-- **Comparison matrices**: Side-by-side evaluation with other seals
-- **SWOT analysis**: Strengths, weaknesses, opportunities, threats
-
-### 9. **Quality Indicators**
-
-#### **Excellence Markers**
-- **Immediate recognition**: Viewers quickly identify it as the city's seal
-- **Memorable design**: People remember it after seeing it once
-- **Appropriate symbolism**: Symbols clearly relate to the city
-- **Professional appearance**: Looks official and authoritative
-- **Versatile application**: Works well in various contexts and media
-
-#### **Problem Indicators**
-- **Confusion**: Viewers don't understand what it represents
-- **Poor reproduction**: Doesn't work well when copied or resized
-- **Outdated elements**: Contains symbols that no longer apply
-- **Cultural insensitivity**: Includes inappropriate or offensive elements
-- **Legal issues**: Doesn't meet official requirements
-
-### 10. **Improvement Recommendations**
-
-#### **Enhancement Strategies**
-- **Design refinement**: Technical improvements to visual elements
-- **Symbol updating**: Modernizing or replacing outdated symbols
-- **Application optimization**: Improving performance in specific uses
-- **Community engagement**: Involving citizens in evaluation and improvement
-
-## Summary
-
-Effective seal evaluation requires:
-- **Multi-dimensional analysis** covering design, function, and meaning
-- **Stakeholder input** from various community perspectives
-- **Systematic methodology** using established criteria and tools
-- **Balanced assessment** considering both strengths and weaknesses
-- **Future orientation** ensuring continued relevance and effectiveness
-
-This comprehensive evaluation approach ensures that city seals truly serve their communities and fulfill their important role in municipal identity and administration.
+### Step 2: Component Checking
+1. **State Background**: Do the colors match?
+2. **Population Frame**: Does the frame correspond to the population?
+3. **Capital Crown**: Is the status correctly represented?
+4. **Orientation Circle**: Is the geographic position correct?
+5. **Text Elements**: Are all specifications correct?

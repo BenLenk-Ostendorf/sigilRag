@@ -1,45 +1,41 @@
-# Learning Goal 2: Functions of a City Seal
+# The Individual Components of a Seal
 
-## What is the function of a city seal?
+A city seal consists of various components, each fulfilling a specific function:
 
-A city seal serves multiple important functions in municipal administration and civic identity:
+## 1. State Background
+The background of the seal is determined by the federal state of the city and contains the colors of the state flag. Example: Bavaria is blue-white. When there are common color combinations (for example red-white), the colors are oriented to the respective state flag.
 
-### 1. **Official Authentication**
-- **Legal validity**: The seal makes documents legally binding and official
-- **Authority confirmation**: It proves that a document comes from the official city administration
-- **Fraud prevention**: Seals are difficult to forge and therefore protect against document falsification
+Examples of State Backgrounds:
 
-### 2. **Identity and Recognition**
-- **City symbol**: The seal represents the city's identity and history
-- **Recognition value**: Citizens and institutions can immediately recognize official city documents
-- **Tradition**: Many seals have historical significance and connect the present with the past
+- Bavaria (blue-white)
+- Berlin (red-white)
+- Baden-Württemberg (black-yellow)
 
-### 3. **Administrative Functions**
-- **Document certification**: Contracts, certificates, and official letters receive their validity through the seal
-- **Process control**: The seal marks the completion of administrative processes
-- **Responsibility**: It shows who is responsible for a decision or document
+## 2. Population Frame
+The frame is determined by the population of the city:
 
-## Historical Development
+- For cities with over 1 million inhabitants: Two-colored border with green spikes
+- For cities with 500,000 to 1 million inhabitants: Two-colored border with elevations
+- For cities with less than 500,000 inhabitants: Single-colored border
 
-City seals have a long tradition:
-- **Middle Ages**: First city seals emerged in the 12th century
-- **Legal significance**: Originally served as the only means of authentication
-- **Evolution**: From simple symbols to complex heraldic designs
+## 3. Capital Crown
+The Capital Crown is only used for capitals and Bonn:
 
-## Modern Applications
+- For federal capitals: Crown with two underlines in inverted German flag colors
+- For state capitals: Crown with red underline
+- For the former federal capital: Crown only
+- For other cities: No Capital Crown
 
-Today, city seals are used for:
-- Official documents and certificates
-- Contracts and agreements
-- Ceremonial occasions
-- Digital authentication (electronic seals)
+## 4. Orientation Circle/Location Circle
+The Location Circles represent the approximate geographic location of the city within the federal state. The black circle is in the background, the yellow circle in the foreground. For city-states (like Berlin), the completely yellow filled circle is used.
 
-## Summary
+## 5. Text Elements
 
-The city seal is much more than just a decorative element. It is a powerful tool that:
-- Ensures legal security
-- Creates trust
-- Represents municipal identity
-- Connects tradition with modernity
+### Short Registration Plate
+On the left side are the letters of the vehicle registration plate of the respective city for precise identification.
 
-Understanding these functions is essential for appreciating the importance of seals in municipal administration.
+### Coordinate Rectangle
+On the right side, the approximate coordinates of the city are given in the format "LAT|LON" (e.g. "48|11").
+
+### Founding Center
+In the center of the seal stands the founding year of the city (shortened to the first two digits).

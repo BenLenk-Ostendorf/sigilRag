@@ -3,23 +3,16 @@
 Ein Stadtsiegel besteht aus verschiedenen Komponenten, die jeweils eine spezifische Funktion erfüllen:
 
 ## 1. Bundeslandshintergrund (State Background)
-Der Hintergrund des Siegels wird durch das Bundesland der Stadt bestimmt und enthält die Farben der Landesflagge. Beispiel: Bayern ist blau-weiß. Wenn es häufige Farbkombinationen gibt (zum Beispiel rot-weiß) sind die Farben an der jeweiligen Landesflagge orientiert.
+Der Hintergrund des Siegels enthält die Farben der Landesflagge.
 
 ## 2. Bevölkerungsrahmen (Population Frame)
-Der Rahmen wird durch die Bevölkerungszahl der Stadt bestimmt:
-- Für Städte mit über 1 Million Einwohnern: Zweifarbiger Rand mit grünen Spitzen
-- Für Städte mit 500.000 bis 1 Million Einwohnern: Zweifarbiger Rand mit Erhebungen
-- Für Städte mit weniger als 500.000 Einwohnern: Einfarbiger Rand
+Der Rahmen wird durch die Bevölkerungszahl der Stadt bestimmt.
 
 ## 3. Hauptstadtkrone (Capital Crown)
-Die Hauptstadtkrone wird nur für Hauptstädte und Bonn verwendet:
-- Für Bundeshauptstädte: Krone mit zwei Unterstrichen in umgekehrten deutschen Flaggenfarben
-- Für Landeshauptstädte: Krone mit rotem Unterstrich
-- Für die ehemalige Bundeshauptstadt: Ausschließlich die Krone
-- Für andere Städte: Keine Hauptstadtkrone
+Die Hauptstadtkrone wird nur für Hauptstädte und Bonn verwendet.
 
 ## 4. Orientierungskreis/Lagekreis (Orientation Circle/Location Circle)
-Die Lagekreise stellen die ungefähre geografische Lage der Stadt innerhalb des Bundeslandes dar. Der schwarze Kreis ist im Hintergrund, der gelbe Kreis im Vordergrund. Bei Stadtstaaten (wie Berlin) wird der komplett gelb gefüllte Kreis verwendet.
+Der schwarze Kreis ist der Orientierungskreis und wird im Hintergrund platziert, der gelbe Kreis ist der Lagekreis und wird im Vordergrund platziert.
 
 ## 5. Textelemente
 
@@ -27,7 +20,7 @@ Die Lagekreise stellen die ungefähre geografische Lage der Stadt innerhalb des 
 Auf der linken Seite stehen die Buchstaben des Kfz-Kennzeichens der jeweiligen Stadt zur präzisen Identifizierung.
 
 ### Koordinatenrechteck (Coordinate Rectangle)
-Auf der rechten Seite werden die ungefähren Koordinaten der Stadt im Format "LAT|LON" angegeben (z.B. "48|11").
+Auf der rechten Seite werden die ungefähren Koordinaten der Stadt im Format "LAT|LON" angegeben.
 
 ### Gründungsmittelpunkt (Founding Center)
-Im Zentrum des Siegels steht das Gründungsjahr der Stadt (verkürzt auf die ersten zwei Ziffern).
+Im Zentrum des Siegels steht das Gründungsjahr der Stadt.

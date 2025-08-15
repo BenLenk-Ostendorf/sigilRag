@@ -1,129 +1,73 @@
-# Learning Goal 4: Analysis and Interpretation of City Seals
+# Deriving Missing Information from Incomplete Seals
 
-## How do you analyze and interpret a city seal?
+## Using City Data for Analysis
 
-Analyzing a city seal requires a systematic approach to understand its meaning, history, and significance. Here's a comprehensive guide to seal analysis:
+When analyzing an incomplete seal, you can use the available city data to derive missing information:
 
-### 1. **Visual Analysis**
+| No. | City              | Population | Founded            | Federal State          | Location in State | Capital Status          | Registration | Coordinates (Precise)  |
+| --- | ----------------- | ---------- | ------------------ | ---------------------- | ----------------- | ----------------------- | ------------ | ---------------------- |
+| 1   | Berlin            | 3,664,088  | 1237               | Berlin                 | -                 | Federal & State Capital | B            | 52.5170° N, 13.3889° E |
+| 2   | Hamburg           | 1,852,478  | 1189               | Hamburg                | -                 | State Capital           | HH           | 53.5511° N, 9.9937° E  |
+| 3   | Munich            | 1,488,202  | 1158               | Bavaria                | South             | State Capital           | M            | 48.1371° N, 11.5755° E |
+| 4   | Cologne           | 1,083,498  | 50 BC              | North Rhine-Westphalia | West              |                         | K            | 50.9352° N, 6.9531° E  |
+| 5   | Frankfurt am Main | 764,104    | 794                | Hesse                  | Southwest         |                         | F            | 50.1109° N, 8.6821° E  |
+| 6   | Stuttgart         | 630,305    | 950                | Baden-Württemberg      | Central           | State Capital           | S            | 48.7833° N, 9.1833° E  |
+| 7   | Düsseldorf        | 620,523    | 1288               | North Rhine-Westphalia | West              | State Capital           | D            | 51.2217° N, 6.7762° E  |
+| 8   | Leipzig           | 597,493    | 1015               | Saxony                 | Northwest         |                         | L            | 51.3402° N, 12.3601° E |
+| 9   | Dortmund          | 587,696    | 882                | North Rhine-Westphalia | West              |                         | DO           | 51.5142° N, 7.4684° E  |
+| 10  | Essen             | 582,415    | 845                | North Rhine-Westphalia | West              |                         | E            | 51.4508° N, 7.0131° E  |
+| 11  | Bremen            | 566,573    | 787                | Bremen                 | -                 | State Capital           | HB           | 53.0736° N, 8.8064° E  |
+| 12  | Dresden           | 556,227    | 1206               | Saxony                 | East              | State Capital           | DD           | 51.0504° N, 13.7373° E |
+| 13  | Hannover          | 534,049    | 1150               | Lower Saxony           | Central           | State Capital           | H            | 52.3739° N, 9.7356° E  |
+| 14  | Nuremberg         | 515,543    | 1050               | Bavaria                | North             |                         | N            | 49.4610° N, 11.0619° E |
+| 15  | Duisburg          | 495,885    | 883                | North Rhine-Westphalia | West              |                         | DU           | 51.4351° N, 6.7627° E  |
+| 16  | Bochum            | 364,454    | 890                | North Rhine-Westphalia | West              |                         | BO           | 51.4818° N, 7.2162° E  |
+| 17  | Wuppertal         | 355,004    | 1929 (Merger)      | North Rhine-Westphalia | West              |                         | W            | 51.2562° N, 7.1508° E  |
+| 18  | Bielefeld         | 333,509    | 1214               | North Rhine-Westphalia | Northeast         |                         | BI           | 52.0211° N, 8.5347° E  |
+| 19  | Bonn              | 330,579    | 1st Century BC     | North Rhine-Westphalia | South             | Former Federal Capital  | BN           | 50.7333° N, 7.1000° E  |
+| 20  | Münster           | 316,403    | 793                | North Rhine-Westphalia | West              |                         | MS           | 51.9616° N, 7.6282° E  |
 
-#### **First Impression**
-- **Overall appearance**: What is your immediate impression of the seal?
-- **Dominant elements**: Which symbols or features stand out most?
-- **Style and era**: Does the design suggest a particular historical period?
-- **Complexity**: Is it simple and clear, or complex and detailed?
+## Analysis Methods for Incomplete Seals
 
-#### **Structural Examination**
-- **Shape and format**: Circular, oval, shield-shaped, or other?
-- **Layout**: How are elements arranged within the seal field?
-- **Proportions**: What is the relationship between different elements?
-- **Border and text**: How is the outer ring designed and what does it contain?
+### 1. Identification Through Visible Elements
 
-### 2. **Symbol Interpretation**
+#### Short Registration Plate Recognizable
+If the vehicle registration plate is visible, you can directly find the corresponding city in the table and derive all other information.
 
-#### **Heraldic Elements**
-- **Animals**: Lions (courage), eagles (power), bears (strength), etc.
-- **Objects**: Keys (authority), swords (justice), scales (fairness)
-- **Natural elements**: Trees (growth), rivers (life), mountains (stability)
-- **Buildings**: Churches (faith), castles (protection), bridges (connection)
+#### Coordinates Recognizable
+With visible coordinates, you can match them with the table and identify the city.
 
-#### **Color Symbolism** (if applicable)
-- **Red**: Courage, strength, passion
-- **Blue**: Loyalty, truth, justice
-- **Gold/Yellow**: Nobility, generosity, wisdom
-- **Green**: Hope, nature, growth
-- **Black**: Dignity, grief, penitence
-- **White/Silver**: Peace, sincerity, innocence
+#### Founding Year Recognizable
+The shortened founding year in the center can be used for identification (e.g., "12" for Munich, founded 1158).
 
-### 3. **Historical Context**
+### 2. Derivation Through Seal Components
 
-#### **Research Methods**
-- **City archives**: Historical documents and records
-- **Local museums**: Artifacts and historical displays
-- **Academic sources**: Books and articles about local history
-- **Oral traditions**: Stories and legends passed down through generations
+#### State Background
+The colors of the background reveal the federal state. From this, you can narrow down the possible cities. But keep in mind that there can be many cities with similar orientation.
 
-#### **Key Questions**
-- When was the seal first created?
-- What historical events influenced its design?
-- How has the seal changed over time?
-- What was happening in the city when the seal was designed?
+#### Population Frame
+- Two-colored border with green spikes → over 1 million inhabitants
+- Two-colored border with elevations → 500,000 to 1 million inhabitants
+- Single-colored border → under 500,000 inhabitants
 
-### 4. **Cultural and Social Analysis**
+#### Capital Crown
+- Crown with two underlines → Federal capital (Berlin)
+- Crown with red underline → State capital
+- Crown only → Former federal capital (Bonn)
 
-#### **Community Identity**
-- **Values representation**: What values does the seal emphasize?
-- **Cultural heritage**: Which cultural traditions are reflected?
-- **Economic focus**: What industries or activities are highlighted?
-- **Geographic identity**: How does the seal reflect the local landscape?
+#### Orientation Circle
+The position of the yellow circle indicates the location of the city within the federal state.
 
-#### **Social Context**
-- **Power structures**: Who commissioned the seal and why?
-- **Intended audience**: Who was meant to see and understand the seal?
-- **Social messages**: What does the seal communicate about the community?
+### 3. Combined Analysis
+By combining multiple visible elements, you can systematically narrow down the possibilities:
 
-### 5. **Comparative Analysis**
+**Example**: 
+- Blue-white background → Bavaria
+- Crown with red underline → State capital
+- Yellow circle in the south → Southern location
+- Result: Munich
 
-#### **Regional Comparison**
-- How does this seal compare to others in the region?
-- Are there common elements or themes?
-- What makes this seal unique?
-
-#### **Temporal Comparison**
-- How has seal design evolved over time?
-- What modern elements have been added or removed?
-- How do historical and contemporary versions differ?
-
-### 6. **Functional Analysis**
-
-#### **Practical Applications**
-- **Document authentication**: How effectively does it serve its legal function?
-- **Recognition factor**: Is it easily identifiable and memorable?
-- **Reproduction quality**: Does it work well in various formats and sizes?
-- **Digital adaptation**: How well does it translate to digital media?
-
-### 7. **Critical Evaluation**
-
-#### **Effectiveness Assessment**
-- Does the seal successfully represent the city?
-- Are the symbols appropriate and meaningful?
-- Is the design aesthetically pleasing and professional?
-- Does it serve its intended functions well?
-
-#### **Contemporary Relevance**
-- Do the symbols still resonate with today's community?
-- Are there elements that might be considered outdated or problematic?
-- How well does the seal adapt to modern communication needs?
-
-### 8. **Analysis Framework**
-
-#### **Step-by-Step Process**
-1. **Observe**: Carefully examine all visual elements
-2. **Describe**: Document what you see objectively
-3. **Research**: Investigate historical and cultural context
-4. **Interpret**: Analyze the meaning and significance of symbols
-5. **Evaluate**: Assess the seal's effectiveness and relevance
-6. **Conclude**: Synthesize findings into a comprehensive understanding
-
-#### **Documentation**
-- **Visual record**: Photographs or drawings of the seal
-- **Written analysis**: Detailed description and interpretation
-- **Source citations**: References to research materials
-- **Comparative materials**: Examples of similar or related seals
-
-### 9. **Common Analytical Mistakes**
-
-#### **Pitfalls to Avoid**
-- **Assuming universal symbolism**: Symbols can have different meanings in different cultures
-- **Ignoring historical context**: Modern interpretations may not reflect original intent
-- **Over-interpretation**: Not every element necessarily has deep symbolic meaning
-- **Neglecting practical considerations**: Seals must function as well as symbolize
-
-## Summary
-
-Effective seal analysis combines:
-- **Careful observation** with **thorough research**
-- **Historical knowledge** with **cultural understanding**
-- **Objective description** with **thoughtful interpretation**
-- **Individual elements** with **overall composition**
-
-This systematic approach reveals not just what a seal shows, but what it means and why it matters to the community it represents.
+**Example**:
+- Two-colored border with green spikes → over 1 million inhabitants
+- Crown with two underlines → Federal capital
+- Result: Berlin
