@@ -113,8 +113,8 @@ class ExplainerUI:
         """Render the stepper UI showing the learning phases."""
         phases = [
             ("information", "📚 Verstehen"),
-            ("train", "🏋️ Trainieren"),
-            ("test", "🧠 Quiz")
+            ("train", "🏋️ Training"),
+            ("test", "📋 Test")
         ]
         
         # Create stepper visualization
@@ -169,21 +169,28 @@ class ExplainerUI:
         col1, col2, col3 = st.columns([1, 1, 1])
         
         with col2:
-            if st.button("✅ Fertig gelesen - Zum Quiz", key="to_quiz", use_container_width=True):
-                st.session_state.learning_phase = "test"
+            if st.button("➡️ Weiter zum Training", key="to_training", use_container_width=True):
+                st.session_state.learning_phase = "train"
                 st.rerun()
     
     def _render_training_phase(self, current_goal: dict, goal_index: int):
-        """Render the training phase."""
+        """Render the training phase with interactive quiz for practice."""
+        # Get user ID from session state or generate one
+        user_id = st.session_state.get("user_id", "anonymous")
+        
+        # Add training context
         st.markdown(f"### 🏋️ Training für Lernziel {goal_index + 1}")
-        st.info("🚧 Trainingsbereich wird in einer zukünftigen Version implementiert.")
+        st.info("💡 **Trainingsmodus:** Hier können Sie üben und erhalten sofortiges Feedback. Nutzen Sie diese Phase, um Ihr Verständnis zu vertiefen!")
+        
+        # Render the quiz interface for training
+        self.quiz_ui.render_quiz_interface(current_goal, goal_index, user_id)
         
         # Navigation buttons
         st.markdown("---")
         col1, col2, col3 = st.columns([1, 1, 1])
         
         with col1:
-            if st.button("← Zurück zu Informationen", key="back_to_info", use_container_width=True):
+            if st.button("← Zurück zu Informationen", key="back_to_info_from_training", use_container_width=True):
                 st.session_state.learning_phase = "information"
                 st.rerun()
         
@@ -193,20 +200,42 @@ class ExplainerUI:
                 st.rerun()
     
     def _render_test_phase(self, current_goal: dict, goal_index: int):
-        """Render the test phase with interactive quiz."""
-        # Get user ID from session state or generate one
-        user_id = st.session_state.get("user_id", "anonymous")
+        """Render the test phase for formal assessment."""
+        st.markdown(f"### 📋 Test für Lernziel {goal_index + 1}")
+        st.warning("⚠️ **Testmodus:** Dies ist eine formale Bewertung. Sie haben begrenzte Versuche und erhalten erst am Ende Feedback.")
         
-        # Render the quiz interface
-        self.quiz_ui.render_quiz_interface(current_goal, goal_index, user_id)
+        # TODO: Implement formal test logic
+        st.info("🚧 Formaler Testbereich wird in einer zukünftigen Version implementiert.")
+        st.markdown("""
+        **Geplante Test-Features:**
+        - Begrenzte Anzahl von Versuchen
+        - Zeitlimit pro Frage
+        - Feedback erst nach Abschluss aller Fragen
+        - Bewertung und Zertifizierung
+        - Fortschritt wird gespeichert
+        """)
         
-        # Back to information button
+        # Navigation buttons
         st.markdown("---")
-        col1, col2, col3 = st.columns([1, 2, 1])
+        col1, col2, col3 = st.columns([1, 1, 1])
+        
         with col1:
-            if st.button("← Zurück zum Text", key="back_to_info_from_quiz", use_container_width=True):
-                st.session_state.learning_phase = "information"
+            if st.button("← Zurück zum Training", key="back_to_training", use_container_width=True):
+                st.session_state.learning_phase = "train"
                 st.rerun()
+        
+        with col3:
+            goals = self.learning_goals_manager.get_learning_goals()
+            if goal_index + 1 < len(goals):
+                if st.button("➡️ Nächstes Lernziel", key="next_goal", use_container_width=True):
+                    st.session_state.current_goal_index += 1
+                    st.session_state.learning_phase = "information"
+                    st.rerun()
+            else:
+                if st.button("🎉 Abschließen", key="complete_learning", use_container_width=True):
+                    st.session_state.page_mode = "checklist"
+                    st.success("🎉 Herzlichen Glückwunsch! Sie haben alle Lernziele durchlaufen!")
+                    st.rerun()
     
     def _load_goal_information(self, goal_number: int) -> str:
         """Load goal-specific information from markdown files."""
