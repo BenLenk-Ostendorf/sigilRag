@@ -368,22 +368,12 @@ class QuizUI:
         # Track this question
         if question_data:
             question_hash = self._get_question_hash(question_data)
-            question_text = question_data.get("question", "")
-            
-            # Debug logging
-            st.write(f"🔍 **Debug Info:**")
-            st.write(f"- Question hash: `{question_hash}`")
-            st.write(f"- Previously asked: {len(quiz_state['asked_questions'])} questions")
-            st.write(f"- Subjects covered: {quiz_state['question_subjects']}")
-            st.write(f"- Question preview: {question_text[:100]}...")
-            
             quiz_state["asked_questions"].append(question_hash)
             
             # Extract and track subject/topic
             subject = self._extract_question_subject(question_data)
             if subject and subject not in quiz_state["question_subjects"]:
                 quiz_state["question_subjects"].append(subject)
-                st.write(f"- **New subject added:** {subject}")
         
         return question_data
     
@@ -466,7 +456,10 @@ class QuizUI:
                         self._advance_to_next_goal(goal_index)
     
     def _advance_to_next_goal(self, current_goal_index: int):
-        """Advance to the next learning goal."""
+        """Advance to the next learning goal and mark current goal as complete."""
+        # CRITICAL: Mark the current goal as complete when advancing
+        self._mark_goal_as_complete(current_goal_index)
+        
         goals = self.quiz_system.learning_goals_manager.get_learning_goals() if hasattr(self.quiz_system, 'learning_goals_manager') else []
         
         if current_goal_index + 1 < len(goals):
@@ -479,6 +472,29 @@ class QuizUI:
             st.success(success_text)
         
         st.rerun()
+    
+    def _mark_goal_as_complete(self, goal_index: int):
+        """Mark a learning goal as complete in the learning goals manager."""
+        # Goal IDs are 1-based, so goal_index + 1
+        goal_id = goal_index + 1
+        user_id = st.session_state.get("user_id", "default_user")
+        
+        # Get the learning goals manager from the explainer UI
+        if hasattr(st.session_state, 'explainer_ui') and hasattr(st.session_state.explainer_ui, 'learning_goals_manager'):
+            learning_goals_manager = st.session_state.explainer_ui.learning_goals_manager
+        elif hasattr(self.quiz_system, 'learning_goals_manager'):
+            learning_goals_manager = self.quiz_system.learning_goals_manager
+        else:
+            # Import and create if not available
+            from .learning_goals_manager import LearningGoalsManager
+            learning_goals_manager = LearningGoalsManager()
+        
+        # Mark the goal as complete in the progress system
+        learning_goals_manager.update_goal_progress(user_id, goal_id, True)
+        
+        # Also update the checkbox state for immediate visual feedback
+        checkbox_key = f"goal_checkbox_{goal_id}"
+        st.session_state[checkbox_key] = True
     
     def _submit_answer(self, quiz_key: str, user_answer: Any):
         """Submit and evaluate an answer with adaptive quiz logic."""

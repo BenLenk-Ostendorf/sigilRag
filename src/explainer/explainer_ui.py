@@ -21,6 +21,8 @@ class ExplainerUI:
         self.logger = logger
         self.learning_goals_manager = LearningGoalsManager()
         self.quiz_system = QuizSystem()
+        # Connect the learning goals manager to the quiz system
+        self.quiz_system.learning_goals_manager = self.learning_goals_manager
         self.quiz_ui = QuizUI(self.quiz_system)
         
     def render_main_page(self, user_id: str, user_group: int):
@@ -567,9 +569,14 @@ class ExplainerUI:
                     st.rerun()
             
             with col2:
-                # Goal description with status indicator
-                status_icon = "✅" if new_status else "⭕"
-                st.markdown(f"{status_icon} **{goal['description']}**")
+                # Goal description with status indicator and strikethrough for completed
+                if new_status:
+                    status_icon = "✅"
+                    # Use strikethrough for completed goals
+                    st.markdown(f"{status_icon} ~~**{goal['description']}**~~")
+                else:
+                    status_icon = "⭕"
+                    st.markdown(f"{status_icon} **{goal['description']}**")
             
             if new_status:
                 completed_count += 1
