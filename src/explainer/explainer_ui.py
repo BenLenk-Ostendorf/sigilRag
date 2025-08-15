@@ -185,7 +185,7 @@ class ExplainerUI:
     def _render_language_selector(self):
         """Render language selector in the sidebar with professional flag images from Flags API."""
         with st.sidebar:
-            st.markdown("### 🌐 Language Selection")
+            st.markdown("### 🌐 Deutsch/ English")
             
             # Initialize selected language if not set
             if "selected_language" not in st.session_state:
