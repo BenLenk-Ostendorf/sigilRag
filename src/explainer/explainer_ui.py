@@ -129,8 +129,6 @@ class ExplainerUI:
             self._render_information_phase(current_goal, current_goal_index)
         elif learning_phase == "train":
             self._render_training_phase(current_goal, current_goal_index)
-        elif learning_phase == "test":
-            self._render_test_phase(current_goal, current_goal_index)
     
     def _render_stepper(self, current_phase: str):
         """Render the stepper UI showing the learning phases."""
@@ -139,14 +137,12 @@ class ExplainerUI:
         if language == "English":
             phases = [
                 ("information", "📚 Understand"),
-                ("train", "🏋️ Training"),
-                ("test", "📋 Test")
+                ("train", "🏋️ Training")
             ]
         else:
             phases = [
                 ("information", "📚 Verstehen"),
-                ("train", "🏋️ Training"),
-                ("test", "📋 Test")
+                ("train", "🏋️ Training")
             ]
         
         # Create stepper visualization
@@ -279,69 +275,22 @@ class ExplainerUI:
                 st.rerun()
         
         with col3:
-            next_text = "➡️ Continue to Test" if language == "English" else "➡️ Weiter zum Test"
-            if st.button(next_text, key="to_test", use_container_width=True):
-                st.session_state.learning_phase = "test"
-                st.rerun()
-    
-    def _render_test_phase(self, current_goal: dict, goal_index: int):
-        """Render the test phase for formal assessment."""
-        language = st.session_state.get("selected_language", PROMPT_CONFIG["default_language"])
-        
-        title_text = f"### 📋 Test for Learning Goal {goal_index + 1}" if language == "English" else f"### 📋 Test für Lernziel {goal_index + 1}"
-        st.markdown(title_text)
-        
-        warning_text = "⚠️ **Test Mode:** This is a formal assessment. You have limited attempts and receive feedback only at the end." if language == "English" else "⚠️ **Testmodus:** Dies ist eine formale Bewertung. Sie haben begrenzte Versuche und erhalten erst am Ende Feedback."
-        st.warning(warning_text)
-        
-        # TODO: Implement formal test logic
-        info_text = "🚧 Formal test area will be implemented in a future version." if language == "English" else "🚧 Formaler Testbereich wird in einer zukünftigen Version implementiert."
-        st.info(info_text)
-        
-        if language == "English":
-            st.markdown("""
-            **Planned Test Features:**
-            - Limited number of attempts
-            - Time limit per question
-            - Feedback only after completing all questions
-            - Evaluation and certification
-            - Progress is saved
-            """)
-        else:
-            st.markdown("""
-            **Geplante Test-Features:**
-            - Begrenzte Anzahl von Versuchen
-            - Zeitlimit pro Frage
-            - Feedback erst nach Abschluss aller Fragen
-            - Bewertung und Zertifizierung
-            - Fortschritt wird gespeichert
-            """)
-        
-        # Navigation buttons
-        st.markdown("---")
-        col1, col2, col3 = st.columns([1, 1, 1])
-        
-        with col1:
-            back_text = "← Back to Training" if language == "English" else "← Zurück zum Training"
-            if st.button(back_text, key="back_to_training", use_container_width=True):
-                st.session_state.learning_phase = "train"
-                st.rerun()
-        
-        with col3:
             goals = self.learning_goals_manager.get_learning_goals()
             if goal_index + 1 < len(goals):
                 next_goal_text = "➡️ Next Learning Goal" if language == "English" else "➡️ Nächstes Lernziel"
-                if st.button(next_goal_text, key="next_goal", use_container_width=True):
+                if st.button(next_goal_text, key="next_goal_from_training", use_container_width=True):
                     st.session_state.current_goal_index += 1
                     st.session_state.learning_phase = "information"
                     st.rerun()
             else:
                 complete_text = "🎉 Complete" if language == "English" else "🎉 Abschließen"
-                if st.button(complete_text, key="complete_learning", use_container_width=True):
+                if st.button(complete_text, key="complete_learning_from_training", use_container_width=True):
                     st.session_state.page_mode = "checklist"
                     success_text = "🎉 Congratulations! You have completed all learning goals!" if language == "English" else "🎉 Herzlichen Glückwunsch! Sie haben alle Lernziele durchlaufen!"
                     st.success(success_text)
                     st.rerun()
+    
+
     
     def _load_goal_information(self, goal_number: int, language: str = None) -> str:
         """Load goal-specific information from markdown files in the selected language."""
