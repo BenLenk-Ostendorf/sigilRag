@@ -21,7 +21,25 @@ Learning Goal: {goal_description}
 LEARNING CONTENT:
 {learning_content}
 
-The question should test understanding of the specific learning content. Use concrete details, terms, and concepts from the provided text. The question should check whether the student has really read and understood the content.
+CRITICAL INSTRUCTION: Your question must STRICTLY match the learning goal's intent. Analyze the learning goal carefully:
+
+Here are a few examples:
+- If the goal mentions "name" or "identify" components → Ask ONLY for identification/naming (e.g., "What is this component called?")
+- If the goal mentions "function" or "purpose" → Ask ONLY about what components do
+- If the goal mentions "assembly" or "creation" → Ask ONLY about how to put things together
+- If the goal mentions "analysis" or "evaluation" → Ask ONLY about analyzing or comparing
+Ensure that you strictly follow the learning goal at hand.
+
+DO NOT mix different types of questions. If the learning goal is about naming components, do NOT ask about function, usage, or selection. Only ask for the name/identification.
+
+Use concrete details, terms, and concepts from the provided text. The question should check whether the student has really read and understood the content.
+
+You can include images in your questions using the placeholder format: {{{{IMAGE:path/filename.png}}}}
+
+AVAILABLE IMAGES:
+{available_images}
+
+When asking about component identification/naming, ALWAYS include an image of the component using {{{{IMAGE:path/filename.png}}}} and ask "What is this component called?" or similar identification questions.
 
 Respond in {language}.
 """
@@ -32,27 +50,25 @@ Respond in {language}.
 
 Create a multiple-choice question with 4 answer options.
 
+STRICT REQUIREMENT: Your question type must match the learning goal exactly:
+- For NAMING/IDENTIFICATION goals: Ask "What is this component called?" with an image
+- For FUNCTION goals: Ask "What does this component do?"
+- For ASSEMBLY goals: Ask "How is this assembled?"
+- For ANALYSIS goals: Ask "How do you analyze this?"
+
+You can include images in your question using: {{{{IMAGE:path/filename.png}}}}
+For identification questions, ALWAYS include an image: "What is this component called? {{{{IMAGE:component_type/filename.png}}}}"
+
 Respond in the following JSON format:
 {
-    "question": "The question here",
+    "question": "The question here (with optional {{{{IMAGE:path}}}} placeholders)",
     "options": ["Option A", "Option B", "Option C", "Option D"],
     "correct_answer": 0,
     "explanation": "Explanation why this answer is correct"
 }
 """,
         
-        "open_ended": """
 
-Create an open-ended question that requires a detailed answer.
-
-Respond in the following JSON format:
-{
-    "question": "The question here",
-    "sample_answer": "A sample answer",
-    "key_points": ["Important point 1", "Important point 2", "Important point 3"],
-    "explanation": "What a good answer should contain"
-}
-""",
         
         "true_false": """
 
@@ -120,12 +136,13 @@ Respond in JSON format in {language}:
         return prompt.format(language=language)
     
     @classmethod
-    def get_content_based_prompt(cls, goal_description: str, learning_content: str, question_type: str, language: str = "German") -> str:
+    def get_content_based_prompt(cls, goal_description: str, learning_content: str, question_type: str, language: str = "German", available_images: str = "") -> str:
         """Generate a complete prompt for content-based question generation."""
         base_prompt = cls.BASE_CONTENT_PROMPT.format(
             goal_description=goal_description,
             learning_content=learning_content,
-            language=language
+            language=language,
+            available_images=available_images
         )
         
         type_prompt = cls.QUESTION_TYPE_PROMPTS.get(question_type, cls.QUESTION_TYPE_PROMPTS["multiple_choice"])
@@ -157,6 +174,79 @@ Respond in JSON format in {language}:
             user_answer=user_answer,
             language=language
         )
+    
+    @classmethod
+    def get_available_images_list(cls) -> str:
+        """Generate a formatted list of available images for the LLM."""
+        import os
+        
+        # Get project root
+        current_dir = os.path.dirname(__file__)
+        project_root = os.path.dirname(os.path.dirname(current_dir))
+        components_dir = os.path.join(project_root, "data", "sigil_components")
+        
+        available_images = []
+        
+        if os.path.exists(components_dir):
+            for component_type in os.listdir(components_dir):
+                component_path = os.path.join(components_dir, component_type)
+                if os.path.isdir(component_path):
+                    for image_file in os.listdir(component_path):
+                        if image_file.endswith('.png'):
+                            relative_path = f"{component_type}/{image_file}"
+                            # Create description based on component type and file name
+                            description = cls._get_image_description(component_type, image_file)
+                            available_images.append(f"- {relative_path}: {description}")
+        
+        return "\n".join(available_images)
+    
+    @classmethod
+    def _get_image_description(cls, component_type: str, filename: str) -> str:
+        """Generate a description for an image based on its type and filename."""
+        descriptions = {
+            "population_frame": {
+                "medium_city.png": "Population frame for cities with less than 500,000 inhabitants",
+                "large_city.png": "Population frame for cities with 500,000 to 1 million inhabitants", 
+                "mega_city.png": "Population frame for cities with over 1 million inhabitants"
+            },
+            "capital_crown": {
+                "federal_capital.png": "Crown for federal capitals",
+                "state_capital.png": "Crown for state capitals",
+                "former_federal_capital.png": "Crown for former federal capital (Bonn)"
+            },
+            "orientation_location_circle": {
+                "north.png": "Location circle for northern position",
+                "south.png": "Location circle for southern position",
+                "east.png": "Location circle for eastern position",
+                "west.png": "Location circle for western position",
+                "northeast.png": "Location circle for northeastern position",
+                "northwest.png": "Location circle for northwestern position",
+                "southeast.png": "Location circle for southeastern position",
+                "southwest.png": "Location circle for southwestern position",
+                "central.png": "Location circle for central position",
+                "city_state.png": "Location circle for city-states"
+            },
+            "state_background": {
+                "Bayern.png": "State background for Bavaria",
+                "Berlin.png": "State background for Berlin",
+                "Baden-Württemberg.png": "State background for Baden-Württemberg",
+                "Brandenburg.png": "State background for Brandenburg",
+                "Bremen.png": "State background for Bremen",
+                "Hamburg.png": "State background for Hamburg",
+                "Hessen.png": "State background for Hesse",
+                "Mecklenburg-Vorpommern.png": "State background for Mecklenburg-Vorpommern",
+                "Niedersachsen.png": "State background for Lower Saxony",
+                "Nordrhein-Westfalen.png": "State background for North Rhine-Westphalia",
+                "Reinland-Pfalz.png": "State background for Rhineland-Palatinate",
+                "Saarland.png": "State background for Saarland",
+                "Sachsen.png": "State background for Saxony",
+                "Sachsen-Anhalt.png": "State background for Saxony-Anhalt",
+                "Schleswig-Holstein.png": "State background for Schleswig-Holstein",
+                "Thüringen.png": "State background for Thuringia"
+            }
+        }
+        
+        return descriptions.get(component_type, {}).get(filename, f"{component_type} component")
 
 
 class FormalTestPrompts:

@@ -68,16 +68,14 @@ class QuizUI:
         """Render a question based on its type."""
         question_type = question_data.get("question_type", "multiple_choice")
         
+        # Legacy automatic image display removed to increase quiz difficulty
+        
         if question_type == "multiple_choice":
             self._render_multiple_choice(question_data, quiz_key)
-        elif question_type == "open_ended":
-            self._render_open_ended(question_data, quiz_key)
-        elif question_type == "true_false":
-            self._render_true_false(question_data, quiz_key)
-        elif question_type == "fill_blank":
-            self._render_fill_blank(question_data, quiz_key)
         else:
-            st.error(f"Unbekannter Fragetyp: {question_type}")
+            language = st.session_state.get("selected_language", "German")
+            error_text = f"Unknown question type: {question_type}" if language == "English" else f"Unbekannter Fragetyp: {question_type}"
+            st.error(error_text)
     
     def _render_multiple_choice(self, question_data: Dict[str, Any], quiz_key: str):
         """Render a multiple choice question."""
@@ -87,7 +85,10 @@ class QuizUI:
         st.markdown(header_text)
         
         no_question_text = "No question available" if language == "English" else "Keine Frage verfügbar"
-        st.markdown(question_data.get("question", no_question_text))
+        question_text = question_data.get("question", no_question_text)
+        
+        # Parse and render question with image placeholders
+        self._render_question_with_placeholders(question_text)
         
         options = question_data.get("options", [])
         if not options:
@@ -110,106 +111,206 @@ class QuizUI:
         if st.button(submit_text, key=f"{quiz_key}_submit"):
             self._submit_answer(quiz_key, selected_option)
     
-    def _render_open_ended(self, question_data: Dict[str, Any], quiz_key: str):
-        """Render an open-ended question."""
-        language = st.session_state.get("selected_language", "German")
-        
-        header_text = "#### ✍️ Open Question" if language == "English" else "#### ✍️ Offene Frage"
-        st.markdown(header_text)
-        
-        no_question_text = "No question available" if language == "English" else "Keine Frage verfügbar"
-        st.markdown(question_data.get("question", no_question_text))
-        
-        # Text area for answer
-        answer_key = f"{quiz_key}_open_answer"
-        label_text = "Your answer:" if language == "English" else "Ihre Antwort:"
-        placeholder_text = "Enter your detailed answer here..." if language == "English" else "Geben Sie hier Ihre ausführliche Antwort ein..."
-        
-        user_answer = st.text_area(
-            label_text,
-            height=150,
-            key=answer_key,
-            placeholder=placeholder_text
-        )
-        
-        # Submit button
-        submit_text = "Submit Answer" if language == "English" else "Antwort einreichen"
-        if st.button(submit_text, key=f"{quiz_key}_submit"):
-            if user_answer.strip():
-                self._submit_answer(quiz_key, user_answer.strip())
-            else:
-                warning_text = "Please enter an answer." if language == "English" else "Bitte geben Sie eine Antwort ein."
-                st.warning(warning_text)
+
     
-    def _render_true_false(self, question_data: Dict[str, Any], quiz_key: str):
-        """Render a true/false question."""
+    def _render_question_images(self, question_data: Dict[str, Any]):
+        """Display relevant images for quiz questions based on question content."""
+        import os
+        
+        # Get question text to analyze for relevant components
+        question_text = question_data.get("question", "").lower()
         language = st.session_state.get("selected_language", "German")
         
-        header_text = "#### ✅❌ True or False" if language == "English" else "#### ✅❌ Richtig oder Falsch"
-        st.markdown(header_text)
+        # Get project root for image paths
+        current_dir = os.path.dirname(__file__)
+        project_root = os.path.dirname(os.path.dirname(current_dir))
         
-        no_statement_text = "No statement available" if language == "English" else "Keine Aussage verfügbar"
-        st.markdown(question_data.get("question", no_statement_text))
+        # Determine which images to show based on question content
+        images_to_show = []
         
-        # Radio buttons for true/false
-        answer_key = f"{quiz_key}_tf_answer"
-        radio_label = "Is this statement true or false?" if language == "English" else "Ist diese Aussage richtig oder falsch?"
-        
-        if language == "English":
-            format_func = lambda x: "True" if x else "False"
-        else:
-            format_func = lambda x: "Richtig" if x else "Falsch"
-        
-        selected_answer = st.radio(
-            radio_label,
-            [True, False],
-            format_func=format_func,
-            key=answer_key
-        )
-        
-        # Submit button
-        submit_text = "Submit Answer" if language == "English" else "Antwort einreichen"
-        if st.button(submit_text, key=f"{quiz_key}_submit"):
-            self._submit_answer(quiz_key, selected_answer)
-    
-    def _render_fill_blank(self, question_data: Dict[str, Any], quiz_key: str):
-        """Render a fill-in-the-blank question."""
-        language = st.session_state.get("selected_language", "German")
-        
-        header_text = "#### 📝 Fill in the Blanks" if language == "English" else "#### 📝 Lückentext"
-        st.markdown(header_text)
-        
-        no_question_text = "No question available" if language == "English" else "Keine Frage verfügbar"
-        question_text = question_data.get("question", no_question_text)
-        blank_count = question_text.count("_____")
-        
-        st.markdown(question_text)
-        
-        # Input fields for each blank
-        answers = []
-        for i in range(blank_count):
+        # Check for population frame related content
+        if any(keyword in question_text for keyword in ["population", "bevölkerung", "einwohner", "frame", "rahmen", "border", "rand"]):
+            component_dir = os.path.join(project_root, "data", "sigil_components", "population_frame")
             if language == "English":
-                label = f"Blank {i+1}:"
-                placeholder = f"Answer for blank {i+1}"
+                images_to_show.extend([
+                    (os.path.join(component_dir, "medium_city.png"), "Medium city (< 500k inhabitants)"),
+                    (os.path.join(component_dir, "large_city.png"), "Large city (500k-1M inhabitants)"),
+                    (os.path.join(component_dir, "mega_city.png"), "Mega city (> 1M inhabitants)")
+                ])
             else:
-                label = f"Lücke {i+1}:"
-                placeholder = f"Antwort für Lücke {i+1}"
-            
-            answer = st.text_input(
-                label,
-                key=f"{quiz_key}_blank_{i}",
-                placeholder=placeholder
-            )
-            answers.append(answer)
+                images_to_show.extend([
+                    (os.path.join(component_dir, "medium_city.png"), "Mittelstadt (< 500k Einwohner)"),
+                    (os.path.join(component_dir, "large_city.png"), "Großstadt (500k-1M Einwohner)"),
+                    (os.path.join(component_dir, "mega_city.png"), "Megastadt (> 1M Einwohner)")
+                ])
         
-        # Submit button
-        submit_text = "Submit Answer" if language == "English" else "Antwort einreichen"
-        if st.button(submit_text, key=f"{quiz_key}_submit"):
-            if all(answer.strip() for answer in answers):
-                self._submit_answer(quiz_key, answers)
+        # Check for capital crown related content
+        if any(keyword in question_text for keyword in ["capital", "hauptstadt", "crown", "krone", "federal", "bundes", "state", "landes"]):
+            component_dir = os.path.join(project_root, "data", "sigil_components", "capital_crown")
+            if language == "English":
+                images_to_show.extend([
+                    (os.path.join(component_dir, "federal_capital.png"), "Federal capital crown"),
+                    (os.path.join(component_dir, "state_capital.png"), "State capital crown"),
+                    (os.path.join(component_dir, "former_federal_capital.png"), "Former federal capital (Bonn)")
+                ])
             else:
-                warning_text = "Please fill in all blanks." if language == "English" else "Bitte füllen Sie alle Lücken aus."
-                st.warning(warning_text)
+                images_to_show.extend([
+                    (os.path.join(component_dir, "federal_capital.png"), "Bundeshauptstadt-Krone"),
+                    (os.path.join(component_dir, "state_capital.png"), "Landeshauptstadt-Krone"),
+                    (os.path.join(component_dir, "former_federal_capital.png"), "Ehemalige Bundeshauptstadt (Bonn)")
+                ])
+        
+        # Check for location/orientation circle related content
+        if any(keyword in question_text for keyword in ["location", "lage", "orientation", "orientierung", "circle", "kreis", "direction", "richtung", "north", "nord", "south", "süd"]):
+            component_dir = os.path.join(project_root, "data", "sigil_components", "orientation_location_circle")
+            if language == "English":
+                images_to_show.extend([
+                    (os.path.join(component_dir, "north.png"), "Northern location"),
+                    (os.path.join(component_dir, "central.png"), "Central location"),
+                    (os.path.join(component_dir, "city_state.png"), "City-state location")
+                ])
+            else:
+                images_to_show.extend([
+                    (os.path.join(component_dir, "north.png"), "Nördliche Lage"),
+                    (os.path.join(component_dir, "central.png"), "Zentrale Lage"),
+                    (os.path.join(component_dir, "city_state.png"), "Stadtstaat-Lage")
+                ])
+        
+        # Check for state background related content
+        if any(keyword in question_text for keyword in ["state", "bundesland", "background", "hintergrund", "color", "farbe", "bavaria", "bayern", "berlin"]):
+            component_dir = os.path.join(project_root, "data", "sigil_components", "state_background")
+            if language == "English":
+                images_to_show.extend([
+                    (os.path.join(component_dir, "Bayern.png"), "Bavaria state background"),
+                    (os.path.join(component_dir, "Berlin.png"), "Berlin state background"),
+                    (os.path.join(component_dir, "Baden-Württemberg.png"), "Baden-Württemberg state background")
+                ])
+            else:
+                images_to_show.extend([
+                    (os.path.join(component_dir, "Bayern.png"), "Bayern Bundeslandshintergrund"),
+                    (os.path.join(component_dir, "Berlin.png"), "Berlin Bundeslandshintergrund"),
+                    (os.path.join(component_dir, "Baden-Württemberg.png"), "Baden-Württemberg Bundeslandshintergrund")
+                ])
+        
+        # Display images if any were found
+        if images_to_show:
+            # Limit to maximum 3 images to avoid overwhelming the UI
+            images_to_show = images_to_show[:3]
+            
+            if language == "English":
+                st.markdown("**Reference Images:**")
+            else:
+                st.markdown("**Referenzbilder:**")
+            
+            cols = st.columns(len(images_to_show))
+            for i, (image_path, caption) in enumerate(images_to_show):
+                if os.path.exists(image_path):
+                    with cols[i]:
+                        st.image(image_path, caption=caption, use_container_width=True)
+            
+            st.markdown("---")
+    
+    def _render_question_with_placeholders(self, question_text: str):
+        """Parse and render question text with image placeholders."""
+        import re
+        import os
+        
+        # Get project root for image paths
+        current_dir = os.path.dirname(__file__)
+        project_root = os.path.dirname(os.path.dirname(current_dir))
+        
+        # Find all image placeholders in the format {{IMAGE:path/filename.png}}
+        image_pattern = r'\{\{IMAGE:([^}]+)\}\}'
+        matches = re.findall(image_pattern, question_text)
+        
+        # First, render any images found
+        for image_path_relative in matches:
+            image_path = os.path.join(project_root, "data", "sigil_components", image_path_relative)
+            if os.path.exists(image_path):
+                # Display image in a centered column without caption to increase difficulty
+                col1, col2, col3 = st.columns([1, 2, 1])
+                with col2:
+                    st.image(image_path, use_container_width=True)
+            else:
+                # Image not found, show placeholder
+                language = st.session_state.get("selected_language", "German")
+                error_text = f"⚠️ Image not found: {image_path_relative}" if language == "English" else f"⚠️ Bild nicht gefunden: {image_path_relative}"
+                st.warning(error_text)
+        
+        # Then, render the question text with all image placeholders removed
+        clean_text = re.sub(image_pattern, '', question_text)
+        clean_text = clean_text.strip()
+        
+        if clean_text:
+            st.markdown(clean_text)
+    
+    def _get_image_caption_from_path(self, component_type: str, filename: str) -> str:
+        """Generate a caption for an image based on its component type and filename."""
+        language = st.session_state.get("selected_language", "German")
+        
+        # Use the same descriptions as in prompts_config.py
+        if language == "English":
+            descriptions = {
+                "population_frame": {
+                    "medium_city.png": "Medium city population frame",
+                    "large_city.png": "Large city population frame", 
+                    "mega_city.png": "Mega city population frame"
+                },
+                "capital_crown": {
+                    "federal_capital.png": "Federal capital crown",
+                    "state_capital.png": "State capital crown",
+                    "former_federal_capital.png": "Former federal capital crown"
+                },
+                "orientation_location_circle": {
+                    "north.png": "Northern location circle",
+                    "south.png": "Southern location circle",
+                    "east.png": "Eastern location circle",
+                    "west.png": "Western location circle",
+                    "northeast.png": "Northeastern location circle",
+                    "northwest.png": "Northwestern location circle",
+                    "southeast.png": "Southeastern location circle",
+                    "southwest.png": "Southwestern location circle",
+                    "central.png": "Central location circle",
+                    "city_state.png": "City-state location circle"
+                },
+                "state_background": {
+                    "Bayern.png": "Bavaria state background",
+                    "Berlin.png": "Berlin state background",
+                    "Baden-Württemberg.png": "Baden-Württemberg state background"
+                }
+            }
+        else:
+            descriptions = {
+                "population_frame": {
+                    "medium_city.png": "Mittelstadt Bevölkerungsrahmen",
+                    "large_city.png": "Großstadt Bevölkerungsrahmen", 
+                    "mega_city.png": "Megastadt Bevölkerungsrahmen"
+                },
+                "capital_crown": {
+                    "federal_capital.png": "Bundeshauptstadt Krone",
+                    "state_capital.png": "Landeshauptstadt Krone",
+                    "former_federal_capital.png": "Ehemalige Bundeshauptstadt Krone"
+                },
+                "orientation_location_circle": {
+                    "north.png": "Nördlicher Lagekreis",
+                    "south.png": "Südlicher Lagekreis",
+                    "east.png": "Östlicher Lagekreis",
+                    "west.png": "Westlicher Lagekreis",
+                    "northeast.png": "Nordöstlicher Lagekreis",
+                    "northwest.png": "Nordwestlicher Lagekreis",
+                    "southeast.png": "Südöstlicher Lagekreis",
+                    "southwest.png": "Südwestlicher Lagekreis",
+                    "central.png": "Zentraler Lagekreis",
+                    "city_state.png": "Stadtstaat Lagekreis"
+                },
+                "state_background": {
+                    "Bayern.png": "Bayern Bundeslandshintergrund",
+                    "Berlin.png": "Berlin Bundeslandshintergrund",
+                    "Baden-Württemberg.png": "Baden-Württemberg Bundeslandshintergrund"
+                }
+            }
+        
+        return descriptions.get(component_type, {}).get(filename, f"{component_type} component")
     
     def _submit_answer(self, quiz_key: str, user_answer: Any):
         """Submit and evaluate an answer."""

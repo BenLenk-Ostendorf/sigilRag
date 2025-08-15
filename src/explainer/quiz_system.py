@@ -25,12 +25,9 @@ class QuizSystem:
         self.max_tokens = 800
         self.temperature = 0.7
         
-        # Question types
+        # Question types (restricted to multiple choice only for simplicity)
         self.question_types = [
-            "multiple_choice",
-            "open_ended",
-            "true_false",
-            "fill_blank"
+            "multiple_choice"
         ]
         
     def _load_api_key(self):
@@ -75,12 +72,16 @@ class QuizSystem:
         if not question_type:
             question_type = random.choice(self.question_types)
         
+        # Get available images list for the LLM
+        available_images = QuizPrompts.get_available_images_list()
+        
         # Create prompt based on question type and actual content using centralized prompts
         prompt = QuizPrompts.get_content_based_prompt(
             goal_description=learning_goal.get("description", ""),
             learning_content=learning_content,
             question_type=question_type,
-            language=language
+            language=language,
+            available_images=available_images
         )
         
         try:

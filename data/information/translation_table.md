@@ -3,10 +3,10 @@
 
 | Deutsch                | Englisch                 |
 | ---------------------- | ------------------------ |
-| Bundeslandshintergrund | State Background<br>     |
-| Bevölkerungsrahmen<br> | Population Frame<br>     |
-| Hauptstadtkrone<br>    | Capital Crown<br>        |
-| Orientierungskreis<br> | Orientation Circle<br>   |
+| Bundeslandshintergrund | State Background         |
+| Bevölkerungsrahmen     | Population Frame         |
+| Hauptstadtkrone        | Capital Crown            |
+| Orientierungskreis     | Orientation Circle       |
 | Lagekreis              | Location Circle          |
 | Koordinatenrechteck    | Coordinate Rectangle     |
 | Kurzkennzeichen        | Short Registration Plate |
