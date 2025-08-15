@@ -368,12 +368,22 @@ class QuizUI:
         # Track this question
         if question_data:
             question_hash = self._get_question_hash(question_data)
+            question_text = question_data.get("question", "")
+            
+            # Debug logging
+            st.write(f"🔍 **Debug Info:**")
+            st.write(f"- Question hash: `{question_hash}`")
+            st.write(f"- Previously asked: {len(quiz_state['asked_questions'])} questions")
+            st.write(f"- Subjects covered: {quiz_state['question_subjects']}")
+            st.write(f"- Question preview: {question_text[:100]}...")
+            
             quiz_state["asked_questions"].append(question_hash)
             
             # Extract and track subject/topic
             subject = self._extract_question_subject(question_data)
             if subject and subject not in quiz_state["question_subjects"]:
                 quiz_state["question_subjects"].append(subject)
+                st.write(f"- **New subject added:** {subject}")
         
         return question_data
     

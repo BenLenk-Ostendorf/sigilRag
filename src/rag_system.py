@@ -14,7 +14,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.vectorstores import FAISS
 from langchain.chains import ConversationalRetrievalChain
-from langchain.memory import ConversationBufferWindowMemory
+from langchain.memory import ChatMessageHistory
 from langchain.schema import Document
 from langchain.prompts import PromptTemplate
 
@@ -73,13 +73,10 @@ class SiegelRAGSystem:
             else:
                 self._create_vector_store()
             
-            # Initialize memory
-            self.memory = ConversationBufferWindowMemory(
-                k=10,
-                memory_key="chat_history",
-                return_messages=True,
-                output_key="answer"
-            )
+            # Initialize memory - Updated to resolve deprecation warning
+            # Using ChatMessageHistory instead of deprecated ConversationBufferWindowMemory
+            self.chat_history = ChatMessageHistory()
+            self.memory = None  # We'll handle memory manually to avoid deprecation
             
             # Create QA chain
             self._create_qa_chain()

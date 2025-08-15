@@ -191,16 +191,21 @@ class QuizSystem:
                 instructions.append("- Generate a HARD difficulty question")
                 instructions.append("- Include more complex scenarios or edge cases")
             
-            # Subject variation instructions
+            # Subject variation instructions - be more specific
             if subjects_covered:
                 covered_str = ", ".join(subjects_covered)
-                instructions.append(f"- Try to focus on subjects NOT yet covered: {covered_str}")
-                instructions.append("- Vary the component or aspect being tested")
+                instructions.append(f"- AVOID these already covered subjects: {covered_str}")
+                instructions.append("- Focus on DIFFERENT components: population frame, capital crown, location circle, state background")
+                instructions.append("- If all subjects covered, use different aspects (size, color, position, meaning)")
+            else:
+                instructions.append("- Vary the component type being tested")
             
-            # Repetition avoidance
+            # Repetition avoidance - be more explicit
             if asked_questions:
-                instructions.append(f"- Avoid repeating similar questions (already asked {len(asked_questions)} questions)")
-                instructions.append("- Use different wording, examples, or focus areas")
+                instructions.append(f"- CRITICAL: You have already asked {len(asked_questions)} questions")
+                instructions.append("- Do NOT repeat similar question patterns or focus areas")
+                instructions.append("- Use completely different components, images, or question angles")
+                instructions.append("- If asking about the same component type, focus on different aspects")
         
         else:  # German
             instructions.append("ADAPTIVE ANFORDERUNGEN:")
@@ -213,16 +218,21 @@ class QuizSystem:
                 instructions.append("- Generiere eine SCHWERE Schwierigkeitsfrage")
                 instructions.append("- Verwende komplexere Szenarien oder Grenzfälle")
             
-            # Subject variation instructions
+            # Subject variation instructions - be more specific
             if subjects_covered:
                 covered_str = ", ".join(subjects_covered)
-                instructions.append(f"- Versuche, Themen zu fokussieren, die NOCH NICHT behandelt wurden: {covered_str}")
-                instructions.append("- Variiere die Komponente oder den Aspekt, der getestet wird")
+                instructions.append(f"- VERMEIDE diese bereits behandelten Themen: {covered_str}")
+                instructions.append("- Fokussiere auf ANDERE Komponenten: Bevölkerungsrahmen, Hauptstadtkrone, Lagekreis, Staatshintergrund")
+                instructions.append("- Falls alle Themen behandelt, verwende andere Aspekte (Größe, Farbe, Position, Bedeutung)")
+            else:
+                instructions.append("- Variiere den Komponententyp, der getestet wird")
             
-            # Repetition avoidance
+            # Repetition avoidance - be more explicit
             if asked_questions:
-                instructions.append(f"- Vermeide ähnliche Fragen zu wiederholen (bereits {len(asked_questions)} Fragen gestellt)")
-                instructions.append("- Verwende andere Formulierungen, Beispiele oder Schwerpunkte")
+                instructions.append(f"- KRITISCH: Du hast bereits {len(asked_questions)} Fragen gestellt")
+                instructions.append("- Wiederhole NICHT ähnliche Fragemuster oder Schwerpunkte")
+                instructions.append("- Verwende völlig andere Komponenten, Bilder oder Fragewinkel")
+                instructions.append("- Falls du über denselben Komponententyp fragst, fokussiere auf andere Aspekte")
         
         return "\n".join(instructions)
     
