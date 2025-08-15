@@ -8,6 +8,8 @@ from typing import Dict, List, Optional, Any
 from .explainer_core import ExplainerCore
 from .explainer_logger import ExplainerLogger
 from .learning_goals_manager import LearningGoalsManager
+from .quiz_system import QuizSystem
+from .quiz_ui import QuizUI
 
 class ExplainerUI:
     """User interface handler for the explAIner system."""
@@ -17,6 +19,8 @@ class ExplainerUI:
         self.core = core
         self.logger = logger
         self.learning_goals_manager = LearningGoalsManager()
+        self.quiz_system = QuizSystem()
+        self.quiz_ui = QuizUI(self.quiz_system)
         
     def render_main_page(self, user_id: str, user_group: int):
         """Render the explAIner page - either checklist or learning flow."""
@@ -110,7 +114,7 @@ class ExplainerUI:
         phases = [
             ("information", "📚 Verstehen"),
             ("train", "🏋️ Trainieren"),
-            ("test", "📋 Challange")
+            ("test", "🧠 Quiz")
         ]
         
         # Create stepper visualization
@@ -165,8 +169,8 @@ class ExplainerUI:
         col1, col2, col3 = st.columns([1, 1, 1])
         
         with col2:
-            if st.button("➡️ Weiter zum Training", key="to_training", use_container_width=True):
-                st.session_state.learning_phase = "train"
+            if st.button("✅ Fertig gelesen - Zum Quiz", key="to_quiz", use_container_width=True):
+                st.session_state.learning_phase = "test"
                 st.rerun()
     
     def _render_training_phase(self, current_goal: dict, goal_index: int):
@@ -189,31 +193,20 @@ class ExplainerUI:
                 st.rerun()
     
     def _render_test_phase(self, current_goal: dict, goal_index: int):
-        """Render the test phase."""
-        st.markdown(f"### 📋 Test für Lernziel {goal_index + 1}")
-        st.info("🚧 Testbereich wird in einer zukünftigen Version implementiert.")
+        """Render the test phase with interactive quiz."""
+        # Get user ID from session state or generate one
+        user_id = st.session_state.get("user_id", "anonymous")
         
-        # Navigation buttons
+        # Render the quiz interface
+        self.quiz_ui.render_quiz_interface(current_goal, goal_index, user_id)
+        
+        # Back to information button
         st.markdown("---")
-        col1, col2, col3 = st.columns([1, 1, 1])
-        
+        col1, col2, col3 = st.columns([1, 2, 1])
         with col1:
-            if st.button("← Zurück zum Training", key="back_to_training", use_container_width=True):
-                st.session_state.learning_phase = "train"
+            if st.button("← Zurück zum Text", key="back_to_info_from_quiz", use_container_width=True):
+                st.session_state.learning_phase = "information"
                 st.rerun()
-        
-        with col3:
-            goals = self.learning_goals_manager.get_learning_goals()
-            if goal_index + 1 < len(goals):
-                if st.button("➡️ Nächstes Lernziel", key="next_goal", use_container_width=True):
-                    st.session_state.current_goal_index += 1
-                    st.session_state.learning_phase = "information"
-                    st.rerun()
-            else:
-                if st.button("🎉 Abschließen", key="complete_learning", use_container_width=True):
-                    st.session_state.page_mode = "checklist"
-                    st.success("🎉 Herzlichen Glückwunsch! Sie haben alle Lernziele durchlaufen!")
-                    st.rerun()
     
     def _load_goal_information(self, goal_number: int) -> str:
         """Load goal-specific information from markdown files."""

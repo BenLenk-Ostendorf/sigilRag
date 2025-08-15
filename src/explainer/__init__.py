@@ -7,5 +7,7 @@ from .explainer_core import ExplainerCore
 from .explainer_ui import ExplainerUI
 from .explainer_logger import ExplainerLogger
 from .learning_goals_manager import LearningGoalsManager
+from .quiz_system import QuizSystem
+from .quiz_ui import QuizUI
 
-__all__ = ['ExplainerCore', 'ExplainerUI', 'ExplainerLogger', 'LearningGoalsManager']
+__all__ = ['ExplainerCore', 'ExplainerUI', 'ExplainerLogger', 'LearningGoalsManager', 'QuizSystem', 'QuizUI']
