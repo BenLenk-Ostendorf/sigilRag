@@ -230,11 +230,11 @@ class ExplainerUI:
         title_text = f"### 📚 Information for Learning Goal {goal_index + 1}" if language == "English" else f"### 📚 Informationen für Lernziel {goal_index + 1}"
         st.markdown(title_text)
         
-        # Load and display goal-specific information
+        # Load and display goal-specific information with images
         info_content = self._load_goal_information(goal_index + 1, language)
         
         if info_content:
-            st.markdown(info_content)
+            self._render_information_with_images(info_content, goal_index + 1, language)
         else:
             warning_text = "⚠️ Information for this learning goal could not be loaded." if language == "English" else "⚠️ Informationen für dieses Lernziel konnten nicht geladen werden."
             st.warning(warning_text)
@@ -392,6 +392,142 @@ class ExplainerUI:
         except Exception as e:
             error_text = f"❌ Error loading information: {str(e)}" if language == "English" else f"❌ Fehler beim Laden der Informationen: {str(e)}"
             return error_text
+    
+    def _render_information_with_images(self, content: str, goal_number: int, language: str):
+        """Render information content with appropriate images inserted at relevant sections."""
+        import os
+        
+        # Split content into sections
+        lines = content.split('\n')
+        current_section = []
+        
+        for line in lines:
+            current_section.append(line)
+            
+            # Check if we should insert an image after this line
+            if goal_number == 1:  # For goal 1 (components)
+                if "## 2. Population Frame" in line or "## 2. Bevölkerungsrahmen" in line:
+                    # Render current section
+                    st.markdown('\n'.join(current_section))
+                    current_section = []
+                    
+                    # Show population frame examples
+                    self._show_component_images("population_frame", language)
+                    
+                elif "## 3. Capital Crown" in line or "## 3. Hauptstadtkrone" in line:
+                    # Render current section
+                    st.markdown('\n'.join(current_section))
+                    current_section = []
+                    
+                    # Show capital crown examples
+                    self._show_component_images("capital_crown", language)
+                    
+                elif "## 4. Orientation Circle" in line or "## 4. Orientierungskreis" in line:
+                    # Render current section
+                    st.markdown('\n'.join(current_section))
+                    current_section = []
+                    
+                    # Show orientation circle examples
+                    self._show_component_images("orientation_location_circle", language)
+                    
+                elif "## 1. State Background" in line or "## 1. Bundeslandshintergrund" in line:
+                    # Render current section
+                    st.markdown('\n'.join(current_section))
+                    current_section = []
+                    
+                    # Show state background examples
+                    self._show_component_images("state_background", language)
+        
+        # Render any remaining content
+        if current_section:
+            st.markdown('\n'.join(current_section))
+    
+    def _show_component_images(self, component_type: str, language: str):
+        """Show relevant images for a specific component type."""
+        import os
+        
+        # Get project root
+        current_dir = os.path.dirname(__file__)
+        project_root = os.path.dirname(os.path.dirname(current_dir))
+        component_dir = os.path.join(project_root, "data", "sigil_components", component_type)
+        
+        if not os.path.exists(component_dir):
+            return
+        
+        # Define which images to show for each component type
+        if component_type == "population_frame":
+            if language == "English":
+                st.markdown("**Examples of Population Frames:**")
+                images_to_show = [
+                    ("medium_city.png", "Cities with less than 500,000 inhabitants (single-colored border)"),
+                    ("large_city.png", "Cities with 500,000 to 1 million inhabitants (two-colored border with elevations)"),
+                    ("mega_city.png", "Cities with over 1 million inhabitants (two-colored border with green spikes)")
+                ]
+            else:
+                st.markdown("**Beispiele für Bevölkerungsrahmen:**")
+                images_to_show = [
+                    ("medium_city.png", "Städte mit weniger als 500.000 Einwohnern (einfarbiger Rand)"),
+                    ("large_city.png", "Städte mit 500.000 bis 1 Million Einwohnern (zweifarbiger Rand mit Erhebungen)"),
+                    ("mega_city.png", "Städte mit über 1 Million Einwohnern (zweifarbiger Rand mit grünen Spitzen)")
+                ]
+        
+        elif component_type == "capital_crown":
+            if language == "English":
+                st.markdown("**Examples of Capital Crowns:**")
+                images_to_show = [
+                    ("federal_capital.png", "Federal capitals: Crown with two underlines in inverted German flag colors"),
+                    ("state_capital.png", "State capitals: Crown with red underline"),
+                    ("former_federal_capital.png", "Former federal capital (Bonn): Crown only")
+                ]
+            else:
+                st.markdown("**Beispiele für Hauptstadtkronen:**")
+                images_to_show = [
+                    ("federal_capital.png", "Bundeshauptstädte: Krone mit zwei Unterstrichen in umgekehrten deutschen Flaggenfarben"),
+                    ("state_capital.png", "Landeshauptstädte: Krone mit rotem Unterstrich"),
+                    ("former_federal_capital.png", "Ehemalige Bundeshauptstadt (Bonn): Ausschließlich die Krone")
+                ]
+        
+        elif component_type == "orientation_location_circle":
+            if language == "English":
+                st.markdown("**Examples of Location Circles:**")
+                images_to_show = [
+                    ("north.png", "Northern location"),
+                    ("central.png", "Central location"),
+                    ("city_state.png", "City-state (completely yellow-filled circle)")
+                ]
+            else:
+                st.markdown("**Beispiele für Lagekreise:**")
+                images_to_show = [
+                    ("north.png", "Nördliche Lage"),
+                    ("central.png", "Zentrale Lage"),
+                    ("city_state.png", "Stadtstaat (komplett gelb gefüllter Kreis)")
+                ]
+        
+        elif component_type == "state_background":
+            if language == "English":
+                st.markdown("**Examples of State Backgrounds:**")
+                images_to_show = [
+                    ("Bayern.png", "Bavaria (blue-white)"),
+                    ("Berlin.png", "Berlin (red-white)"),
+                    ("Baden-Württemberg.png", "Baden-Württemberg (black-yellow)")
+                ]
+            else:
+                st.markdown("**Beispiele für Bundeslandshintergründe:**")
+                images_to_show = [
+                    ("Bayern.png", "Bayern (blau-weiß)"),
+                    ("Berlin.png", "Berlin (rot-weiß)"),
+                    ("Baden-Württemberg.png", "Baden-Württemberg (schwarz-gelb)")
+                ]
+        
+        # Display images in columns
+        cols = st.columns(len(images_to_show))
+        for i, (image_file, description) in enumerate(images_to_show):
+            image_path = os.path.join(component_dir, image_file)
+            if os.path.exists(image_path):
+                with cols[i]:
+                    st.image(image_path, caption=description, use_container_width=True)
+        
+        st.markdown("---")
     
     def _render_learning_goals_checklist(self, user_id: str):
         """Render the learning goals as an interactive checklist."""
